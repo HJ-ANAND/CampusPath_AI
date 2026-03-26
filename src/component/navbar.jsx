@@ -1,4 +1,7 @@
 import { Link } from "react-router-dom";
+import Home from "../Pages/Home";
+import About from "../Pages/About";
+import Contact from "../Pages/Contact";
 
 function NavBar() {
   return (
@@ -6,17 +9,17 @@ function NavBar() {
       <h1 className="text-2xl font-bold text-blue-600">CampusPath AI</h1>
       <ul className="hidden md:flex gap-6 text-gray-700 font-medium">
         <li>
-          <Link to="../Pages/Home.jsx" className="hover:text-blue-600">
+          <Link to="/" className="hover:text-blue-600">
             Home
           </Link>
         </li>
         <li>
-          <Link to="../Pages/About.jsx" className="hover:text-blue-600">
+          <Link to="/about" className="hover:text-blue-600">
             About Us
           </Link>
         </li>
         <li>
-          <Link to="../Pages/Contact.jsx" className="hover:text-blue-600">
+          <Link to="/contact" className="hover:text-blue-600">
             Contact Us
           </Link>
         </li>
