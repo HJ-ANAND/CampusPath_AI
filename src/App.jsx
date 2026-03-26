@@ -1,23 +1,20 @@
 import "./App.css";
+import NavBar from "./component/navbar";
+import Home from "./Pages/Home";
+import About from "./Pages/About";
+import Contact from "./Pages/Contact";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 function App() {
   return (
-    <div className="container">
-      {/* Navbar */}
-      <nav className="navbar">
-        <h1 className="logo">CampusPath AI</h1>
-        <button className="btn">Get Started</button>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="hero">
-        <h2>Your Personalized Career Roadmap 🚀</h2>
-        <p>
-          Connect your GitHub, enter your skills, and let AI generate a
-          step-by-step roadmap to land your dream role.
-        </p>
-      </section>
-    </div>
+    <BrowserRouter>
+      <NavBar />
+      <Routes>
+        <Route path="../Pages/" element={<Home />} />
+        <Route path="../Pages/About" element={<About />} />
+        <Route path="../Pages/contact" element={<Contact />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
