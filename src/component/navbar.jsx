@@ -6,7 +6,7 @@ import Contact from "../Pages/Contact";
 function NavBar() {
   return (
     <nav className="w-full flex justify-between items-center p-6 bg-white shadow-md">
-      <h1 className="text-2xl font-bold text-blue-600">CampusPath AI</h1>
+      <h1 className="text-2xl font-bold text-blue-600">Lost & Found</h1>
       <ul className="hidden md:flex gap-6 text-gray-700 font-medium">
         <li>
           <Link to="/" className="hover:text-blue-600">
