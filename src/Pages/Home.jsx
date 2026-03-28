@@ -73,11 +73,11 @@ function Home() {
 
         <div className="grid md:grid-cols-3 gap-8 relative">
           {/* Subtle Connecting Line (hidden on mobile) */}
-          <div className="hidden md:block absolute top-[40%] left-[10%] right-[10%] h-[2px] bg-gradient-to-r from-gray-100 via-gray-300 to-gray-100 -z-10"></div>
+          <div className="hidden md:block absolute top-[40%] left-[10%] right-[10%] h-0.5 bg-linear-to-r from-gray-100 via-gray-300 to-gray-100 -z-10"></div>
 
           {/* Step 1 */}
           <div className="bg-white border border-gray-100 p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden group">
-            <span className="absolute -top-6 -right-4 text-9xl font-extrabold text-gray-50 group-hover:text-gray-100 transition-colors duration-300 -z-0">
+            <span className="absolute -top-6 -right-4 text-9xl font-extrabold text-gray-50 group-hover:text-gray-100 transition-colors duration-300 z-0">
               1
             </span>
             <div className="relative z-10">
@@ -96,7 +96,7 @@ function Home() {
 
           {/* Step 2 */}
           <div className="bg-white border border-gray-100 p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden group md:mt-12">
-            <span className="absolute -top-6 -right-4 text-9xl font-extrabold text-gray-50 group-hover:text-gray-100 transition-colors duration-300 -z-0">
+            <span className="absolute -top-6 -right-4 text-9xl font-extrabold text-gray-50 group-hover:text-gray-100 transition-colors duration-300 z-0">
               2
             </span>
             <div className="relative z-10">
@@ -115,7 +115,7 @@ function Home() {
 
           {/* Step 3 */}
           <div className="bg-white border border-gray-100 p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden group md:mt-24">
-            <span className="absolute -top-6 -right-4 text-9xl font-extrabold text-gray-50 group-hover:text-gray-100 transition-colors duration-300 -z-0">
+            <span className="absolute -top-6 -right-4 text-9xl font-extrabold text-gray-50 group-hover:text-gray-100 transition-colors duration-300 z-0">
               3
             </span>
             <div className="relative z-10">
