@@ -9,7 +9,7 @@ function NavBar() {
       </Link>
 
       {/* Center: Nav Links */}
-      <ul className="hidden md:flex gap-8 text-gray-300 text-sm font-medium">
+      <ul className="hidden md:flex gap-8 text-gray-300 text-lg font-medium pr-7">
         <li>
           <Link
             to="/"
@@ -38,7 +38,8 @@ function NavBar() {
 
       {/* Right Side: CTA Button */}
       <button className="bg-white text-gray-900 text-sm font-medium px-5 py-2 rounded-full hover:bg-gray-100 transition-colors shadow-sm">
-        Get Started
+        {/* Get Started */}
+        Login
       </button>
     </nav>
   );
