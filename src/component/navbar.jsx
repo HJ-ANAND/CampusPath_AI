@@ -1,31 +1,45 @@
 import { Link } from "react-router-dom";
-import Home from "../Pages/Home";
-import About from "../Pages/About";
-import Contact from "../Pages/Contact";
 
 function NavBar() {
   return (
-    <nav className="w-full flex justify-between items-center p-6 bg-white shadow-md">
-      <h1 className="text-2xl font-bold text-blue-600">Lost & Found</h1>
-      <ul className="hidden md:flex gap-6 text-gray-700 font-medium">
+    <nav className="w-full flex justify-between items-center py-4 px-6 md:px-12 bg-gray-900 shadow-md">
+      {/* Left Side: Logo */}
+      <Link to="/" className="text-2xl font-extrabold text-white tracking-wide">
+        Lost <span className="text-gray-400">&</span> Found
+      </Link>
+
+      {/* Center: Nav Links */}
+      <ul className="hidden md:flex gap-8 text-gray-300 text-lg font-medium pr-7">
         <li>
-          <Link to="/" className="hover:text-blue-600">
+          <Link
+            to="/"
+            className="hover:text-white transition-colors duration-200"
+          >
             Home
           </Link>
         </li>
         <li>
-          <Link to="/about" className="hover:text-blue-600">
-            About Us
+          <Link
+            to="/about"
+            className="hover:text-white transition-colors duration-200"
+          >
+            About
           </Link>
         </li>
         <li>
-          <Link to="/contact" className="hover:text-blue-600">
-            Contact Us
+          <Link
+            to="/contact"
+            className="hover:text-white transition-colors duration-200"
+          >
+            Contact
           </Link>
         </li>
       </ul>
-      <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-        Get Started
+
+      {/* Right Side: CTA Button */}
+      <button className="bg-white text-gray-900 text-sm font-medium px-5 py-2 rounded-full hover:bg-gray-100 transition-colors shadow-sm">
+        {/* Get Started */}
+        Login
       </button>
     </nav>
   );
