@@ -3,127 +3,104 @@ import lostFoundHero from "../assets/lost_found_hero.png";
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 flex flex-col items-center">
-      {/* Hero Section */}
-      <section className="relative w-full h-[500px] flex items-center justify-center overflow-hidden">
-        <img
-          src={lostFoundHero}
-          alt="Lost and Found Items"
-          className="absolute inset-0 w-full h-full object-cover opacity-20 scale-105 grayscale"
-        />
-        <div className="relative text-center px-4 max-w-4xl animate-fade-in mt-16">
-          <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight drop-shadow-sm">
-            Lost It? <span className="text-blue-600">Find It.</span>
+    <div className="w-full relative overflow-hidden font-sans text-slate-800 pb-32">
+      <div className="relative z-10 flex flex-col items-center">
+        
+        {/* Header Section */}
+        <section className="relative flex flex-col items-center text-center mt-32 px-6 max-w-4xl mx-auto w-full">
+          <h1 className="text-6xl md:text-7xl font-extrabold text-[#0B1528] tracking-tight mb-8 font-[serif]">
+            About Us
           </h1>
-          <p className="text-xl text-gray-600 font-medium max-w-2xl mx-auto leading-relaxed">
-            Connecting communities to recover what matters most. Our 
-            <span className="text-blue-700 font-bold"> Hyperlocal Lost & Found Network</span> 
-            is built to bring your belongings back home.
+          <h2 className="text-2xl md:text-3xl font-semibold text-slate-700 mb-6">
+            Our Mission: To Reconnect People with Their Belongings
+          </h2>
+          <p className="text-lg md:text-xl text-slate-500 font-medium max-w-3xl leading-relaxed">
+            Lost & Found is a community-driven platform with a goal to facilitate reunions securely, empowering your community to achieve connections and peace of mind.
           </p>
-        </div>
-      </section>
+        </section>
 
-      {/* The Problem & Our Solution */}
-      <section className="py-24 px-6 max-w-6xl mx-auto w-full">
-        <div className="grid md:grid-cols-2 gap-16 items-start">
-          {/* Problem */}
-          <div className="space-y-8">
-            <h2 className="text-4xl font-extrabold text-red-600 flex items-center gap-3">
-              <span className="text-3xl">💥</span> The Problem
-            </h2>
-            <p className="text-lg text-gray-600 leading-relaxed italic">
-              "Losing a wallet or an ID card is stressful, but the lack of a centralized system makes recovery a matter of pure luck."
-            </p>
-            <ul className="space-y-4">
-              <li className="flex items-center gap-4 text-gray-700 font-medium p-4 bg-red-50 rounded-xl border border-red-100 shadow-sm transition hover:shadow-md cursor-default">
-                <span className="text-2xl">❌</span> No centralized system to report lost items.
-              </li>
-              <li className="flex items-center gap-4 text-gray-700 font-medium p-4 bg-red-50 rounded-xl border border-red-100 shadow-sm transition hover:shadow-md cursor-default">
-                <span className="text-2xl">📉</span> Extremely low chances of recovery without connection.
-              </li>
-            </ul>
+        {/* 3. HOW IT WORKS (White Floating cards with Teal Icons to match screen 3) */}
+        <section className="mt-32 px-6 max-w-7xl mx-auto w-full relative z-10">
+          <div className="text-center mb-16">
+            <h3 className="text-4xl md:text-5xl font-extrabold text-[#0B1528] tracking-tight">
+              How It Works
+            </h3>
           </div>
 
-          {/* Solution */}
-          <div className="space-y-8 bg-white p-10 rounded-3xl shadow-sm border border-gray-100 h-full">
-            <h2 className="text-3xl font-extrabold text-gray-900 flex items-center gap-3">
-              <span className="text-3xl">💡</span> Our Solution
-            </h2>
-            <div className="space-y-6">
-              <p className="text-lg text-gray-500 leading-relaxed text-justify">
-                We provide a location-based network that connects you with people in your immediate area. 
-                By focusing on <strong className="text-gray-900">college campuses, societies, and metro stations</strong>, we increase 
-                the speed of recovery and build a trusted community of helpers.
-              </p>
-              <div className="p-6 bg-blue-50 rounded-2xl border-l-8 border-blue-600 text-blue-900 font-medium shadow-sm">
-                <h4 className="font-bold text-xl mb-2 italic">Building a Safer Campus Community</h4>
-                <p className="text-gray-700">Ensuring every lost item has a path back to its owner through collaboration and hyperlocal awareness.</p>
+          <div className="grid md:grid-cols-3 gap-10">
+            <div className="bg-white p-14 rounded-[40px] flex flex-col items-center text-center shadow-2xl shadow-slate-200/50 hover:-translate-y-2 transition-transform duration-300 border border-slate-50">
+              <div className="w-28 h-28 mb-8 text-[#5cb9a5]">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><circle cx="10" cy="13" r="2"/><path d="M11.5 14.5L14 17"/></svg>
               </div>
+              <h4 className="text-3xl font-bold text-[#0B1528] mb-4">Report</h4>
+              <p className="text-slate-500 text-lg leading-relaxed font-medium">
+                Easily log your lost or found item with details and photos.
+              </p>
+            </div>
+
+            <div className="bg-white p-14 rounded-[40px] flex flex-col items-center text-center shadow-2xl shadow-slate-200/50 hover:-translate-y-2 transition-transform duration-300 border border-slate-50">
+              <div className="w-28 h-28 mb-8 text-[#5cb9a5]">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full"><path d="M8.5 14.5A2.5 2.5 0 0011 12c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4a4 4 0 01-1.6 3.2"/><path d="M15 11l5 5-5 5"/><path d="M4 11l5 5-5 5"/><path d="M10 16h4"/></svg>
+              </div>
+              <h4 className="text-3xl font-bold text-[#0B1528] mb-4">Match</h4>
+              <p className="text-slate-500 text-lg leading-relaxed font-medium">
+                Our intelligent system finds potential matches instantly.
+              </p>
+            </div>
+
+            <div className="bg-white p-14 rounded-[40px] flex flex-col items-center text-center shadow-2xl shadow-slate-200/50 hover:-translate-y-2 transition-transform duration-300 border border-slate-50">
+              <div className="w-28 h-28 mb-8 text-[#5cb9a5]">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+              </div>
+              <h4 className="text-3xl font-bold text-[#0B1528] mb-4">Reconnect</h4>
+              <p className="text-slate-500 text-lg leading-relaxed font-medium">
+                Securely message and arrange a reunion with verified users.
+              </p>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Key Features Grid */}
-      <section className="w-full py-24 px-6 bg-white border-y border-gray-100">
-        <div className="max-w-6xl mx-auto text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">Core Platform Features</h2>
-          <p className="text-gray-500 max-w-xl mx-auto text-lg">Built with safety and efficiency as our priority.</p>
-        </div>
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-gray-50 p-10 rounded-3xl shadow-sm hover:shadow-md transition border border-gray-100 group">
-            <div className="bg-white border w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-sm group-hover:scale-110 transition">🔍</div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Detailed Posting</h3>
-            <p className="text-gray-500 leading-relaxed">Add titles, descriptions, specific locations, and even upload images to make identification easier for the finder.</p>
-          </div>
-          <div className="bg-gray-50 p-10 rounded-3xl shadow-sm hover:shadow-md transition border border-gray-100 group">
-            <div className="bg-white border w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-sm group-hover:scale-110 transition">📲</div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Instant Alerts</h3>
-            <p className="text-gray-500 leading-relaxed">Receive notifications as soon as someone reports an item that matches your description and location.</p>
-          </div>
-          <div className="bg-gray-50 p-10 rounded-3xl shadow-sm hover:shadow-md transition border border-gray-100 group">
-            <div className="bg-white border w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-sm group-hover:scale-110 transition">🛡️</div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Secure Chat</h3>
-            <p className="text-gray-500 leading-relaxed">Communicate securely with other users through our identity-masked chat system to arrange safe pickups.</p>
-          </div>
-        </div>
-      </section>
+        {/* Our Impact Section */}
+        <section className="mt-32 px-6 max-w-7xl mx-auto w-full relative z-10 text-center">
+          <h3 className="text-4xl md:text-5xl font-extrabold text-[#0B1528] tracking-tight mb-16">
+            Our Impact
+          </h3>
+          <div className="flex flex-col md:flex-row justify-center gap-12 md:gap-20">
+            {/* Impact 1 */}
+            <div className="flex flex-col items-center gap-4">
+               <div className="w-16 h-16 bg-teal-50 rounded-2xl flex items-center justify-center shadow-inner">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+               </div>
+               <div className="text-center">
+                 <h4 className="text-4xl font-extrabold text-[#5cb9a5]">500+</h4>
+                 <p className="text-slate-500 font-medium text-lg uppercase tracking-wide mt-1">Items Reunited</p>
+               </div>
+            </div>
 
-      {/* Hyperlocal Use Cases */}
-      <section className="w-full py-24 px-6 max-w-6xl mx-auto text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-12 tracking-tight">Optimized for Hyperlocal Environments</h2>
-        <div className="flex flex-wrap justify-center gap-16">
-          <div className="flex flex-col items-center group cursor-default">
-            <div className="text-6xl mb-4 group-hover:rotate-12 transition drop-shadow-sm">🏫</div>
-            <span className="font-bold text-gray-400 uppercase tracking-widest text-sm group-hover:text-gray-900 transition">College Campus</span>
-          </div>
-          <div className="flex flex-col items-center group cursor-default">
-            <div className="text-6xl mb-4 group-hover:-rotate-12 transition drop-shadow-sm">🏢</div>
-            <span className="font-bold text-gray-400 uppercase tracking-widest text-sm group-hover:text-gray-900 transition">Societies</span>
-          </div>
-          <div className="flex flex-col items-center group cursor-default">
-            <div className="text-6xl mb-4 group-hover:scale-125 transition drop-shadow-sm">🚇</div>
-            <span className="font-bold text-gray-400 uppercase tracking-widest text-sm group-hover:text-gray-900 transition">Metro Stations</span>
-          </div>
-        </div>
-      </section>
+            {/* Impact 2 */}
+            <div className="flex flex-col items-center gap-4">
+               <div className="w-16 h-16 bg-teal-50 rounded-2xl flex items-center justify-center shadow-inner">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+               </div>
+               <div className="text-center">
+                 <h4 className="text-4xl font-extrabold text-[#5cb9a5]">10,000+</h4>
+                 <p className="text-slate-500 font-medium text-lg uppercase tracking-wide mt-1">Community Members</p>
+               </div>
+            </div>
 
-      {/* Final CTA Footer */}
-      <section className="bg-gray-900 py-20 px-8 text-center text-white w-full max-w-5xl rounded-3xl shadow-lg mb-12 mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold mb-8 tracking-tight">Find what matters. Helping is free.</h2>
-        <div className="flex flex-wrap justify-center gap-4">
-          <button className="bg-white text-gray-900 px-8 py-4 rounded-full font-medium text-lg hover:bg-gray-100 transition shadow-md">
-            Start Finding Now
-          </button>
-          <button className="bg-transparent border border-gray-500 text-white px-8 py-4 rounded-full font-medium text-lg hover:bg-gray-800 transition">
-            How it Works
-          </button>
-        </div>
-      </section>
+            {/* Impact 3 */}
+            <div className="flex flex-col items-center gap-4">
+               <div className="w-16 h-16 bg-teal-50 rounded-2xl flex items-center justify-center shadow-inner">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+               </div>
+               <div className="text-center">
+                 <h4 className="text-4xl font-extrabold text-[#5cb9a5]">98%</h4>
+                 <p className="text-slate-500 font-medium text-lg uppercase tracking-wide mt-1">Secure Matches</p>
+               </div>
+            </div>
+          </div>
+        </section>
 
-      {/* Embedded Footer */}
-      <div className="mb-10 text-gray-400 text-sm font-medium">
-        &copy; {new Date().getFullYear()} CampusPath AI. All rights reserved.
       </div>
     </div>
   );
