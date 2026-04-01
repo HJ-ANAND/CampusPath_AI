@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 
 function NavBar() {
   return (
@@ -9,7 +10,7 @@ function NavBar() {
       </Link>
 
       {/* Center: Nav Links */}
-      <ul className="hidden md:flex gap-8 text-gray-300 text-lg font-medium pr-7">
+      <ul className="hidden md:flex gap-8 text-gray-300 text-lg font-medium pr-7 items-center">
         <li>
           <Link
             to="/"
@@ -36,11 +37,19 @@ function NavBar() {
         </li>
       </ul>
 
-      {/* Right Side: CTA Button */}
-      <button className="bg-white text-gray-900 text-sm font-medium px-5 py-2 rounded-full hover:bg-gray-100 transition-colors shadow-sm">
-        {/* Get Started */}
-        Login
-      </button>
+      {/* Right Side: Auth Buttons */}
+      <div className="flex items-center gap-4">
+        <SignedOut>
+          <SignInButton mode="modal" forceRedirectUrl="/app">
+            <button className="bg-white text-gray-900 text-sm font-medium px-5 py-2 rounded-full hover:bg-gray-100 transition-colors shadow-sm cursor-pointer">
+              Login
+            </button>
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton showName={true} />
+        </SignedIn>
+      </div>
     </nav>
   );
 }
