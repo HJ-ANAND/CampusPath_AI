@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const API_KEY = "AIzaSyChnKYGzhyrV7-OyI-i05j8a-4vcz_nM3Q";
+const API_KEY = "PUT_YOUR_API_KEY";
 
 function Home() {
   const [showForm, setShowForm] = useState(false);
