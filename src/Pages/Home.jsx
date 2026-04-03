@@ -143,7 +143,7 @@ function Home() {
 
             {/* Recent Lost Item card — top-left, overlaps left panel slightly */}
             <div className="absolute bg-white/82 backdrop-blur-2xl p-5 rounded-[2.2rem] shadow-2xl shadow-slate-300/40 border border-white/70 w-[240px] animate-float"
-              style={{ top: "clamp(50px, 7vh, 90px)", left: "clamp(-200px, -13vw, -80px)", rotate: "3.5deg" }}>
+              style={{ top: "clamp(50px, 7vh, 90px)", left: "clamp(-100px, -20vw, -80px)", rotate: "3.5deg" }}>
               <h4 className="text-[15px] font-bold text-[#0B1528] mb-3">Recent Lost Item</h4>
               <div className="w-full h-[155px] bg-slate-100 rounded-2xl overflow-hidden mb-3 shadow-inner">
                 <img src="https://images.unsplash.com/photo-1627123424574-724758594e93?q=80&w=400&auto=format&fit=crop" alt="Wallet" className="w-full h-full object-cover" />
