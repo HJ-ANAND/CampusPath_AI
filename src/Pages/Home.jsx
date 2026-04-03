@@ -121,7 +121,7 @@ function Home() {
         <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 xl:px-16 flex flex-col lg:flex-row items-center min-h-screen">
           {/* ── LEFT: Hero copy ── */}
           {/* Keeps mobile flow untouched and shifts left copy further on lg+ */}
-          <div className="w-full lg:w-[48%] flex flex-col justify-center pt-28 lg:pt-0 pb-16 lg:pb-0 shrink-0 lg:-ml-[clamp(100px,9vw,160px)] lg:mt-5">
+          <div className="w-full lg:w-[48%] flex flex-col justify-center pt-28 lg:pt-0 pb-16 lg:pb-0 shrink-0 lg:-ml-[clamp(8px,1.2vw,20px)] xl:-ml-[clamp(26px,2.2vw,44px)] 2xl:-ml-[clamp(100px,9vw,160px)] lg:mt-5">
             {/* Badge */}
             <div className="inline-flex items-center gap-2.5 bg-white/80 backdrop-blur-xl border border-white/60 shadow-md px-5 py-2.5 rounded-full mb-8 self-start">
               <span className="w-2.5 h-2.5 rounded-full bg-[#5cb9a5] animate-pulse"></span>
@@ -200,10 +200,10 @@ function Home() {
           {/* ── RIGHT: Floating UI cards (desktop only) ── */}
           {/* Uses clamp() from Home 2 for responsive card placement,
               but preserves Home 1's card sizes and content */}
-          <div className="hidden lg:block relative flex-1 h-screen min-h-[800px]">
+          <div className="hidden lg:block relative flex-1 h-screen min-h-[800px] hero-cards-stage">
             {/* Stats card — bottom-left of right panel */}
             <div
-              className="absolute bg-white/78 backdrop-blur-2xl p-7 rounded-[2rem] shadow-2xl shadow-slate-300/40 border border-white/70 w-[186px] animate-float-delayed"
+              className="absolute bg-white/78 backdrop-blur-2xl p-7 rounded-[2rem] shadow-2xl shadow-slate-300/40 border border-white/70 w-[186px] animate-float-delayed hero-stats-card"
               style={{
                 top: "calc(clamp(380px, 48vh, 500px) - 40px)",
                 left: "calc(clamp(-30px, -2vw, 10px) + 80px)",
@@ -227,7 +227,7 @@ function Home() {
 
             {/* Recent Lost Item card — top-left, overlaps left panel slightly */}
             <div
-              className="absolute bg-white/82 backdrop-blur-2xl p-5 rounded-[2.2rem] shadow-2xl shadow-slate-300/40 border border-white/70 w-[240px] animate-float"
+              className="absolute bg-white/82 backdrop-blur-2xl p-5 rounded-[2.2rem] shadow-2xl shadow-slate-300/40 border border-white/70 w-[240px] animate-float hero-recent-card"
               style={{
                 top: "calc(clamp(50px, 7vh, 90px) - 15px)",
                 left: "clamp(-100px, -20vw, -80px)",
@@ -251,7 +251,7 @@ function Home() {
 
             {/* Found Match card — top-right, bleeds right */}
             <div
-              className="absolute bg-white/88 backdrop-blur-2xl p-6 rounded-[2.2rem] shadow-2xl shadow-slate-300/50 border border-white/70 w-[276px] animate-float-delayed z-20"
+              className="absolute bg-white/88 backdrop-blur-2xl p-6 rounded-[2.2rem] shadow-2xl shadow-slate-300/50 border border-white/70 w-[276px] animate-float-delayed z-20 hero-found-card"
               style={{
                 top: "clamp(80px, 11vh, 140px)",
                 right: "calc(clamp(-200px, -12vw, -50px) + 40px)",
@@ -314,7 +314,7 @@ function Home() {
 
             {/* Category pills — mid-center */}
             <div
-              className="absolute bg-white/78 backdrop-blur-2xl py-3 px-4 rounded-full shadow-xl shadow-slate-200/40 border border-white/70 flex items-center gap-2 animate-float-slow"
+              className="absolute bg-white/78 backdrop-blur-2xl py-3 px-4 rounded-full shadow-xl shadow-slate-200/40 border border-white/70 flex items-center gap-2 animate-float-slow hero-category-card"
               style={{
                 top: "calc(clamp(400px, 50vh, 520px) - 30px)",
                 left: "calc(clamp(220px, 28vw, 340px) + 60px)",
@@ -334,7 +334,7 @@ function Home() {
 
             {/* Contact / Chat card */}
             <div
-              className="absolute bg-white/78 backdrop-blur-2xl px-5 py-4 rounded-[1.6rem] shadow-xl shadow-slate-200/40 border border-white/70 flex items-center gap-4 animate-float"
+              className="absolute bg-white/78 backdrop-blur-2xl px-5 py-4 rounded-[1.6rem] shadow-xl shadow-slate-200/40 border border-white/70 flex items-center gap-4 animate-float hero-contact-card"
               style={{
                 top: "clamp(130px, 17vh, 210px)",
                 right: "clamp(180px, 23vw, 300px)",
@@ -366,7 +366,7 @@ function Home() {
 
             {/* Safe & Secure card */}
             <div
-              className="absolute bg-white/78 backdrop-blur-2xl px-5 py-4 rounded-[1.6rem] shadow-xl shadow-slate-200/40 border border-white/70 flex items-center gap-4 animate-float-slow"
+              className="absolute bg-white/78 backdrop-blur-2xl px-5 py-4 rounded-[1.6rem] shadow-xl shadow-slate-200/40 border border-white/70 flex items-center gap-4 animate-float-slow hero-safe-card"
               style={{
                 bottom: "calc(clamp(120px, 16vh, 180px) - 10px)",
                 left: "calc(clamp(100px, 13vw, 180px) + 80px)",
@@ -399,7 +399,7 @@ function Home() {
 
             {/* Live Activity card */}
             <div
-              className="absolute bg-white/78 backdrop-blur-2xl px-6 py-5 rounded-[2rem] shadow-xl shadow-slate-200/40 border border-white/70 animate-float-delayed"
+              className="absolute bg-white/78 backdrop-blur-2xl px-6 py-5 rounded-[2rem] shadow-xl shadow-slate-200/40 border border-white/70 animate-float-delayed hero-live-card"
               style={{
                 bottom: "clamp(130px, 17vh, 200px)",
                 right: "clamp(20px, 2vw, 60px)",
@@ -420,7 +420,7 @@ function Home() {
 
             {/* Map / Location card — far right bleed */}
             <div
-              className="absolute bg-white/78 backdrop-blur-2xl px-5 py-4 rounded-[1.5rem] shadow-xl shadow-slate-200/40 border border-white/70 flex items-center gap-3 animate-float"
+              className="absolute bg-white/78 backdrop-blur-2xl px-5 py-4 rounded-[1.5rem] shadow-xl shadow-slate-200/40 border border-white/70 flex items-center gap-3 animate-float hero-map-card"
               style={{
                 bottom: "clamp(320px, 40vh, 450px)",
                 right: "calc(clamp(-220px, -13vw, -80px) + 30px)",
