@@ -236,7 +236,7 @@ function Home() {
               </div>
               <div className="flex items-center justify-between gap-3 bg-white/60 p-3 rounded-2xl border border-white/80 mb-3.5 shadow-inner">
                 <img
-                  src="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?q=80&w=150&auto=format&fit=crop"
+                  src="https://ezzzbox.ru/upload/iblock/4ba/rbt4ky8n2rvb6j8aerzdt0g8o3ibw6z2.webp"
                   alt="iPhone"
                   className="w-[62px] h-[82px] object-cover rounded-xl shadow"
                 />
@@ -255,7 +255,7 @@ function Home() {
                 </div>
                 <div className="relative w-[62px] h-[82px]">
                   <img
-                    src="https://images.unsplash.com/photo-1591337676273-9bf232f54eb8?q=80&w=150&auto=format&fit=crop"
+                    src="https://i.ebayimg.com/images/g/P4EAAOSw0QJkHItj/s-l400.jpg"
                     alt="Found iPhone"
                     className="w-full h-full object-cover rounded-xl shadow"
                   />
