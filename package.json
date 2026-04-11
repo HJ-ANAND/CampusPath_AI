@@ -1,0 +1,31 @@
+{
+  "name": "lost-and-found-workspace",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace backend",
+    "dev:backend": "npm run dev --workspace backend",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "build": "npm run build --workspace frontend",
+    "start": "npm run start --workspace backend",
+    "lint": "npm run lint --workspace frontend",
+    "format": "prettier --write .",
+    "help": "node -e \"const d=require('./package.json').scriptDescriptions; for (const k of Object.keys(d)) console.log(k + ': ' + d[k]);\""
+  },
+  "scriptDescriptions": {
+    "dev": "Runs backend dev server (same as dev:backend).",
+    "dev:backend": "Runs backend in development mode (nodemon).",
+    "dev:frontend": "Runs frontend in development mode (Vite).",
+    "build": "Builds the frontend production bundle.",
+    "start": "Starts backend in production mode.",
+    "lint": "Runs frontend lint checks.",
+    "format": "Formats the whole repository with Prettier.",
+    "help": "Prints this command list with descriptions."
+  },
+  "devDependencies": {
+    "prettier": "^3.8.1"
+  }
+}
