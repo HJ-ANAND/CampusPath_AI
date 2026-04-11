@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from "react";
+import { useAuth, useClerk } from "@clerk/clerk-react";
 
-const API_KEY = "PUT_YOUR_API_KEY";
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
-function Home() {
+function App() {
+  const { isSignedIn } = useAuth();
+  const clerk = useClerk();
   const [formType, setFormType] = useState(null);
+
+  const handleAction = (type) => {
+    if (isSignedIn) {
+      setFormType(type);
+    } else {
+      clerk.openSignIn({ forceRedirectUrl: `/app?action=${type}` });
+    }
+  };
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loadingDesc, setLoadingDesc] = useState(false);
+  const [loadingTitle, setLoadingTitle] = useState(false);
 
   useEffect(() => {
     if (description) console.log("Description updated:", description);
@@ -14,7 +26,7 @@ function Home() {
 
   const generateDescription = async () => {
     if (!description.trim()) return;
-    setLoading(true);
+    setLoadingDesc(true);
     try {
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`,
@@ -37,7 +49,7 @@ function Home() {
     } catch (e) {
       alert("Error generating description.");
     } finally {
-      setLoading(false);
+      setLoadingDesc(false);
     }
   };
 
@@ -46,7 +58,7 @@ function Home() {
       alert("Please write a description first.");
       return;
     }
-    setLoading(true);
+    setLoadingTitle(true);
     try {
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`,
@@ -69,549 +81,270 @@ function Home() {
     } catch (e) {
       alert("Error generating title.");
     } finally {
-      setLoading(false);
+      setLoadingTitle(false);
     }
   };
 
   return (
-    <div className="w-full relative font-sans text-slate-800 overflow-x-hidden">
+    <div className="w-full relative font-sans text-slate-800 min-h-screen flex flex-col">
+      {/* Inline Styles for Layout & Static Elements */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-up {
+          animation: fadeUp 0.8s ease-out forwards;
+        }
+
+        .text-outline {
+          color: transparent;
+          -webkit-text-stroke: 1px rgba(11, 21, 40, 0.08);
+        }
+        .text-outline-teal {
+          color: transparent;
+          -webkit-text-stroke: 1px rgba(92, 185, 165, 0.25);
+        }
+        .avatar-stack { display: flex; align-items: center; justify-content: center; }
+        .avatar-item {
+          width: 32px; height: 32px; border-radius: 50%;
+          border: 2px solid white; margin-left: -10px; object-fit: cover;
+        }
+        .avatar-item:first-child { margin-left: 0; }
+        .pulse-dot {
+          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: .5; }
+        }
+        .glass-dark {
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+      `}} />
+
       {/* ══════════════════════════════════════════════════════
-          HERO
+          HERO SECTION
       ══════════════════════════════════════════════════════ */}
-      <section className="relative w-full min-h-screen flex items-center overflow-visible">
-        {/* Background watermark text */}
-        <span
-          className="pointer-events-none select-none absolute font-black text-slate-900/[0.05] leading-none tracking-tighter hidden lg:block"
-          style={{ fontSize: "clamp(7rem,14vw,13rem)", top: "2%", left: "-1%" }}
-        >
-          Lost
-        </span>
-        <span
-          className="pointer-events-none select-none absolute font-black text-slate-900/[0.05] leading-none tracking-tighter hidden lg:block"
-          style={{
-            fontSize: "clamp(7rem,14vw,13rem)",
-            bottom: "4%",
-            right: "-1%",
-          }}
-        >
-          Found
-        </span>
+      <main className="relative w-full min-h-screen flex flex-col items-center justify-center pt-36 pb-32 px-6 overflow-hidden">
+        
+        {/* Large Faded Background Typography */}
+        <span className="absolute top-[20%] left-[-2%] text-[clamp(6rem,15vw,12rem)] font-black text-outline pointer-events-none select-none -rotate-12 opacity-60">LOST</span>
+        <span className="absolute top-[60%] left-[15%] text-[clamp(4rem,10vw,8rem)] font-black text-outline-teal pointer-events-none select-none opacity-50">PHONES</span>
+        <span className="absolute top-[15%] right-[5%] text-[clamp(6rem,15vw,10rem)] font-black text-outline-teal pointer-events-none select-none opacity-50">KEYS</span>
+        <span className="absolute top-[50%] right-[-5%] text-[clamp(6rem,15vw,12rem)] font-black text-outline pointer-events-none select-none rotate-6 opacity-60">FOUND</span>
 
-        {/* Inner container: side-by-side on lg+ */}
-        <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 xl:px-16 flex flex-col lg:flex-row items-center min-h-screen">
-          {/* ── LEFT: Hero copy ── */}
-          {/* Keeps mobile flow untouched and shifts left copy further on lg+ */}
-          <div className="w-full lg:w-[48%] flex flex-col justify-center pt-28 lg:pt-0 pb-16 lg:pb-0 shrink-0 lg:-ml-[clamp(8px,1.2vw,20px)] xl:-ml-[clamp(26px,2.2vw,44px)] 2xl:-ml-[clamp(100px,9vw,160px)] lg:mt-5">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2.5 bg-white/80 backdrop-blur-xl border border-white/60 shadow-md px-5 py-2.5 rounded-full mb-8 self-start">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#5cb9a5] animate-pulse"></span>
-              <span className="text-[14px] font-semibold text-slate-600 tracking-wide">
-                120+ items reconnected this month
-              </span>
-            </div>
-
-            {/* Headline — Home 1 font size preserved via clamp */}
-            <h1
-              className="font-extrabold text-[#0B1528] tracking-tight leading-[1.0] mb-7"
-              style={{ fontSize: "clamp(3rem, 6vw, 5.8rem)" }}
-            >
-              Reconnect
-              <br />
-              <span className="text-[#5cb9a5]">What</span> Matters
-            </h1>
-
-            <p className="text-[1.1rem] xl:text-[1.2rem] text-slate-500 max-w-[420px] mb-11 leading-relaxed font-medium">
-              A premium platform to securely report and find lost belongings
-              with intelligent matching.
-            </p>
-
-            {/* CTA buttons */}
-            <div className="flex flex-wrap gap-3.5 mb-8">
-              <button className="bg-[#0B1528] text-white px-9 py-4 rounded-full font-bold text-[15px] shadow-xl shadow-[#0B1528]/25 hover:-translate-y-1 hover:bg-[#152342] transition-all duration-300">Search Item</button>
-              <button onClick={() => setFormType('lost')} className="bg-[#2D3E56] text-white px-9 py-4 rounded-full font-bold text-[15px] shadow-xl shadow-[#2D3E56]/20 hover:-translate-y-1 hover:bg-[#3B4D68] transition-all duration-300">Report Lost</button>
-              <button onClick={() => setFormType('found')} className="bg-[#5cb9a5] text-white px-9 py-4 rounded-full font-bold text-[15px] shadow-xl shadow-[#5cb9a5]/30 hover:-translate-y-1 hover:bg-[#4ea693] transition-all duration-300">Report Found</button>
-            </div>
-
-            {/* Trust badges */}
-            <div className="flex flex-wrap gap-6">
-              <div className="flex items-center gap-2 text-[14px] text-slate-500 font-medium">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#5cb9a5"
-                  strokeWidth="2.5"
-                >
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                  <polyline points="9 12 11 14 15 10" />
-                </svg>
-                Verified & Encrypted
-              </div>
-              <div className="flex items-center gap-2 text-[14px] text-slate-500 font-medium">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#5cb9a5"
-                  strokeWidth="2.5"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
-                Instant AI Matching
-              </div>
-            </div>
+        {/* ── TOP BADGE ── */}
+        <div className="bg-white/70 backdrop-blur-md border border-white/50 rounded-full px-2 py-1.5 flex items-center gap-4 animate-fade-up z-20 mb-10 shadow-sm pr-6 mt-10">
+          <div className="avatar-stack">
+            <img className="avatar-item" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" alt="u1" />
+            <img className="avatar-item" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop" alt="u2" />
+            <img className="avatar-item" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&h=100&fit=crop" alt="u3" />
+            <div className="avatar-item bg-[#5cb9a5] flex items-center justify-center text-white text-[10px] font-black z-10 relative">15k+</div>
           </div>
-
-          {/* ── RIGHT: Floating UI cards (desktop only) ── */}
-          {/* Uses clamp() from Home 2 for responsive card placement,
-              but preserves Home 1's card sizes and content */}
-          <div className="hidden lg:block relative flex-1 h-screen min-h-[800px] hero-cards-stage">
-            {/* Stats card — bottom-left of right panel */}
-            <div
-              className="absolute bg-white/78 backdrop-blur-2xl p-7 rounded-[2rem] shadow-2xl shadow-slate-300/40 border border-white/70 w-[186px] animate-float-delayed hero-stats-card"
-              style={{
-                top: "calc(clamp(380px, 48vh, 500px) - 40px)",
-                left: "calc(clamp(-30px, -2vw, 10px) + 80px)",
-                rotate: "-6deg",
-              }}
-            >
-              <h3 className="text-[3.4rem] font-black text-[#0B1528] leading-none mb-1">
-                120+
-              </h3>
-              <p className="text-[13px] font-semibold text-slate-400 mb-5">
-                posts matched
-              </p>
-              <div className="w-10 h-[2px] bg-slate-200 mb-5"></div>
-              <h3 className="text-[3.4rem] font-black text-[#0B1528] leading-none mb-1">
-                84%
-              </h3>
-              <p className="text-[13px] font-semibold text-slate-400">
-                faster recovery
-              </p>
-            </div>
-
-            {/* Recent Lost Item card — top-left, overlaps left panel slightly */}
-            <div
-              className="absolute bg-white/82 backdrop-blur-2xl p-5 rounded-[2.2rem] shadow-2xl shadow-slate-300/40 border border-white/70 w-[240px] animate-float hero-recent-card"
-              style={{
-                top: "calc(clamp(50px, 7vh, 90px) - 15px)",
-                left: "clamp(-100px, -20vw, -80px)",
-                rotate: "3.5deg",
-              }}
-            >
-              <h4 className="text-[15px] font-bold text-[#0B1528] mb-3">
-                Recent Lost Item
-              </h4>
-              <div className="w-full h-[155px] bg-slate-100 rounded-2xl overflow-hidden mb-3 shadow-inner">
-                <img
-                  src="https://images.unsplash.com/photo-1627123424574-724758594e93?q=80&w=400&auto=format&fit=crop"
-                  alt="Wallet"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="text-[12px] font-semibold text-slate-500">
-                Wallet — Central Park, NY
-              </p>
-            </div>
-
-            {/* Found Match card — top-right, bleeds right */}
-            <div
-              className="absolute bg-white/88 backdrop-blur-2xl p-6 rounded-[2.2rem] shadow-2xl shadow-slate-300/50 border border-white/70 w-[276px] animate-float-delayed z-20 hero-found-card"
-              style={{
-                top: "clamp(80px, 11vh, 140px)",
-                right: "calc(clamp(-200px, -12vw, -50px) + 40px)",
-                rotate: "-3deg",
-              }}
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h4 className="text-[15px] font-bold text-[#0B1528]">
-                  Found Match
-                </h4>
-                <span className="bg-[#5cb9a5] text-white text-[11px] font-bold px-3 py-1.5 rounded-full">
-                  95% Match
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-3 bg-white/60 p-3 rounded-2xl border border-white/80 mb-3.5 shadow-inner">
-                <img
-                  src="https://ezzzbox.ru/upload/iblock/4ba/rbt4ky8n2rvb6j8aerzdt0g8o3ibw6z2.webp"
-                  alt="iPhone"
-                  className="w-[62px] h-[82px] object-cover rounded-xl shadow"
-                />
-                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-md shrink-0">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3.5"
-                    className="text-[#5cb9a5]"
-                  >
-                    <path d="M5 12l5 5L20 7" />
-                  </svg>
-                </div>
-                <div className="relative w-[62px] h-[82px]">
-                  <img
-                    src="https://i.ebayimg.com/images/g/P4EAAOSw0QJkHItj/s-l400.jpg"
-                    alt="Found iPhone"
-                    className="w-full h-full object-cover rounded-xl shadow"
-                  />
-                  <div className="absolute -top-2 -right-2 bg-white rounded-full p-[3px] shadow-md border border-slate-100">
-                    <div className="bg-[#5cb9a5] rounded-full p-[3px]">
-                      <svg
-                        width="9"
-                        height="9"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
-                Blue iPhone — matched with report 2 days ago
-              </p>
-            </div>
-
-            {/* Category pills — mid-center */}
-            <div
-              className="absolute bg-white/78 backdrop-blur-2xl py-3 px-4 rounded-full shadow-xl shadow-slate-200/40 border border-white/70 flex items-center gap-2 animate-float-slow hero-category-card"
-              style={{
-                top: "calc(clamp(400px, 50vh, 520px) - 30px)",
-                left: "calc(clamp(220px, 28vw, 340px) + 60px)",
-                rotate: "5deg",
-              }}
-            >
-              <span className="bg-[#0B1528] text-white text-[13px] font-bold px-4 py-2 rounded-full">
-                Wallet
-              </span>
-              <span className="text-slate-600 text-[13px] font-bold px-3 py-2 hover:bg-white/80 rounded-full cursor-pointer transition-colors">
-                ID Card
-              </span>
-              <span className="text-slate-600 text-[13px] font-bold px-3 py-2 hover:bg-white/80 rounded-full cursor-pointer transition-colors">
-                Keys
-              </span>
-            </div>
-
-            {/* Contact / Chat card */}
-            <div
-              className="absolute bg-white/78 backdrop-blur-2xl px-5 py-4 rounded-[1.6rem] shadow-xl shadow-slate-200/40 border border-white/70 flex items-center gap-4 animate-float hero-contact-card"
-              style={{
-                top: "clamp(130px, 17vh, 210px)",
-                right: "clamp(180px, 23vw, 300px)",
-                rotate: "-4deg",
-              }}
-            >
-              <div className="w-11 h-11 rounded-full bg-slate-50 flex items-center justify-center shrink-0 shadow-inner border border-white/80">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  className="text-slate-600"
-                >
-                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-                </svg>
-              </div>
-              <div>
-                <h4 className="text-[15px] font-bold text-[#0B1528] leading-tight">
-                  Contact / Chat
-                </h4>
-                <p className="text-[12px] text-slate-400 font-medium mt-0.5">
-                  Message finder securely
-                </p>
-              </div>
-            </div>
-
-            {/* Safe & Secure card */}
-            <div
-              className="absolute bg-white/78 backdrop-blur-2xl px-5 py-4 rounded-[1.6rem] shadow-xl shadow-slate-200/40 border border-white/70 flex items-center gap-4 animate-float-slow hero-safe-card"
-              style={{
-                bottom: "calc(clamp(120px, 16vh, 180px) - 10px)",
-                left: "calc(clamp(100px, 13vw, 180px) + 80px)",
-                rotate: "3deg",
-              }}
-            >
-              <div className="w-11 h-11 rounded-full bg-slate-50 flex items-center justify-center shrink-0 shadow-inner border border-white/80">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  className="text-slate-600"
-                >
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                  <polyline points="9 12 11 14 15 10" />
-                </svg>
-              </div>
-              <div>
-                <h4 className="text-[15px] font-bold text-[#0B1528] leading-tight">
-                  Safe & Secure
-                </h4>
-                <p className="text-[12px] text-slate-400 font-medium mt-0.5">
-                  Verified & Encrypted
-                </p>
-              </div>
-            </div>
-
-            {/* Live Activity card */}
-            <div
-              className="absolute bg-white/78 backdrop-blur-2xl px-6 py-5 rounded-[2rem] shadow-xl shadow-slate-200/40 border border-white/70 animate-float-delayed hero-live-card"
-              style={{
-                bottom: "clamp(130px, 17vh, 200px)",
-                right: "clamp(20px, 2vw, 60px)",
-                rotate: "-3.5deg",
-              }}
-            >
-              <h4 className="text-[15px] font-bold text-[#0B1528] mb-2.5 flex items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#5cb9a5] animate-pulse inline-block"></span>
-                Live Activity
-              </h4>
-              <p className="text-[13px] text-slate-500 font-semibold mb-1">
-                📍 Found: Gold Ring
-              </p>
-              <p className="text-[13px] text-slate-500 font-semibold">
-                🔍 Lost: Backpack
-              </p>
-            </div>
-
-            {/* Map / Location card — far right bleed */}
-            <div
-              className="absolute bg-white/78 backdrop-blur-2xl px-5 py-4 rounded-[1.5rem] shadow-xl shadow-slate-200/40 border border-white/70 flex items-center gap-3 animate-float hero-map-card"
-              style={{
-                bottom: "clamp(320px, 40vh, 450px)",
-                right: "calc(clamp(-220px, -13vw, -80px) + 30px)",
-                rotate: "5deg",
-              }}
-            >
-              <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0 shadow-inner border border-white/80">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  className="text-slate-600"
-                >
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-              </div>
-              <div>
-                <h4 className="text-[14px] font-bold text-[#0B1528] leading-tight">
-                  Map / Location
-                </h4>
-                <p className="text-[11px] text-slate-400 font-medium mt-0.5">
-                  Near Central Library
-                </p>
-              </div>
-            </div>
-          </div>
+          <span className="text-[14px] font-bold text-slate-700">Items Reconnected with Owners</span>
         </div>
-      </section>
 
-      {/* ══════════════════════════════════════════════════════
-          FEATURES — dark navy cards
-      ══════════════════════════════════════════════════════ */}
-      <section className="px-6 xl:px-16 max-w-7xl mx-auto w-full relative z-10 mb-6">
-        <div className="grid md:grid-cols-3 gap-6 xl:gap-8">
-          <div className="bg-[#0B1528] p-10 rounded-[32px] shadow-2xl shadow-[#0B1528]/20 flex flex-col items-start gap-6 hover:-translate-y-2 transition-transform duration-300">
-            <div className="w-16 h-16 rounded-2xl bg-[#1A2642] flex items-center justify-center shrink-0 border border-white/5">
-              <svg
-                width="30"
-                height="30"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#5cb9a5"
-                strokeWidth="2"
-              >
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
-                <circle cx="12" cy="10" r="3" />
-              </svg>
-            </div>
-            <div>
-              <h4 className="text-2xl font-bold text-white mb-2.5">
-                Location Based
-              </h4>
-              <p className="text-slate-400 text-[16px] leading-relaxed">
-                Find lost and found items near your current location instantly
-                without the hassle.
-              </p>
-            </div>
-          </div>
-          <div className="bg-[#0B1528] p-10 rounded-[32px] shadow-2xl shadow-[#0B1528]/20 flex flex-col items-start gap-6 hover:-translate-y-2 transition-transform duration-300">
-            <div className="w-16 h-16 rounded-2xl bg-[#1A2642] flex items-center justify-center shrink-0 border border-white/5">
-              <svg
-                width="30"
-                height="30"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#5cb9a5"
-                strokeWidth="2"
-              >
-                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
-              </svg>
-            </div>
-            <div>
-              <h4 className="text-2xl font-bold text-white mb-2.5">
-                Smart Matching
-              </h4>
-              <p className="text-slate-400 text-[16px] leading-relaxed">
-                Automatically match reported lost items with found posts using
-                our intelligent AI system.
-              </p>
-            </div>
-          </div>
-          <div className="bg-[#0B1528] p-10 rounded-[32px] shadow-2xl shadow-[#0B1528]/20 flex flex-col items-start gap-6 hover:-translate-y-2 transition-transform duration-300">
-            <div className="w-16 h-16 rounded-2xl bg-[#1A2642] flex items-center justify-center shrink-0 border border-white/5">
-              <svg
-                width="30"
-                height="30"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#5cb9a5"
-                strokeWidth="2"
-              >
-                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-              </svg>
-            </div>
-            <div>
-              <h4 className="text-2xl font-bold text-white mb-2.5">
-                Instant Message
-              </h4>
-              <p className="text-slate-400 text-[16px] leading-relaxed">
-                Connect securely with the person who found your item quickly and
-                effortlessly.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════
-          HOW IT WORKS
-      ══════════════════════════════════════════════════════ */}
-      <section className="mt-28 px-6 xl:px-16 max-w-7xl mx-auto w-full mb-28 relative z-10">
-        <div className="text-center mb-16">
-          <h3 className="text-5xl md:text-6xl font-extrabold text-[#0B1528] tracking-tight">
-            How It Works
-          </h3>
-          <p className="text-xl text-slate-500 mt-5 max-w-xl mx-auto leading-relaxed">
-            Three simple steps to reunite with your belongings.
+        {/* ── HEADLINE & SUBTEXT ── */}
+        <div className="relative z-20 text-center max-w-4xl animate-fade-up" style={{ animationDelay: '0.1s' }}>
+          <h1 className="font-black text-[#0B1528] leading-[1.1] mb-6" style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}>
+            Recover Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5cb9a5] to-[#4ea693]">Lost Items</span> <br className="hidden md:block"/>
+            with AI-Powered <span className="text-[#0B1528]">Matching</span>
+          </h1>
+          <p className="text-[1.1rem] md:text-[1.2rem] text-slate-500 max-w-3xl mx-auto mb-10 leading-relaxed font-semibold">
+            Practice with the most advanced AI tracker. Get real-time updates, personalized matching, and comprehensive recovery for lost electronics, wallets, and documents.
           </p>
+
+          {/* Status Badge */}
+          <div className="inline-flex items-center gap-3 bg-white border border-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-full px-6 py-3 mb-10">
+            <div className="w-2.5 h-2.5 bg-[#5cb9a5] rounded-full pulse-dot"></div>
+            <span className="text-[14px] font-bold text-slate-600">150 students are recovering items right now</span>
+          </div>
+
+          {/* ── CTAs ── */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 w-full">
+            <button onClick={() => handleAction('lost')} className="flex items-center justify-center gap-2 bg-[#0B1528] text-white px-8 py-4 rounded-xl font-black text-[16px] shadow-xl shadow-[#0B1528]/20 hover:-translate-y-1 hover:bg-[#152342] transition-all w-full sm:w-auto min-w-[200px]">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+              Report Lost Item
+            </button>
+            <button onClick={() => handleAction('found')} className="bg-[#5cb9a5] text-white px-8 py-4 rounded-xl font-black text-[16px] shadow-xl shadow-[#5cb9a5]/25 hover:-translate-y-1 hover:bg-[#4ea693] transition-all w-full sm:w-auto min-w-[200px]">
+              Submit Found Item
+            </button>
+          </div>
+
+          {/* ── TRUST SIGNALS ── */}
+          <div className="flex flex-wrap justify-center gap-8 text-[14px] font-bold text-slate-500">
+            <div className="flex items-center gap-2">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+              No Registration Required
+            </div>
+            <div className="flex items-center gap-2">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+              Instant AI Assistance
+            </div>
+          </div>
         </div>
-        <div className="grid md:grid-cols-3 gap-6 xl:gap-8 items-end">
-          <div className="bg-white p-12 xl:p-14 rounded-[40px] flex flex-col items-center text-center shadow-2xl shadow-slate-200/50 hover:-translate-y-2 transition-transform duration-300 border border-slate-50">
-            <div className="w-24 h-24 mb-6 text-[#5cb9a5]">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-full h-full"
-              >
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="16" y1="13" x2="8" y2="13" />
-                <line x1="16" y1="17" x2="8" y2="17" />
-                <polyline points="10 9 9 9 8 9" />
-              </svg>
-            </div>
-            <div className="text-6xl font-black text-slate-100 mb-3">01</div>
-            <h4 className="text-2xl font-bold text-[#0B1528] mb-3">Report</h4>
-            <p className="text-slate-500 text-[16px] leading-relaxed font-medium">
-              Submit details about the item you lost or found. Add photos to
-              make finding it even easier.
-            </p>
+
+        {/* ── LEFT & RIGHT STATIC GRAPHICS ── */}
+        {/* Left Graphic (Lost Wallet) */}
+        <div className="absolute left-[2%] top-[25%] hidden xl:flex flex-col items-center animate-fade-up" style={{ animationDelay: '0.2s' }}>
+          <div className="w-[320px] h-[320px] bg-white rounded-full flex items-center justify-center overflow-hidden border-[6px] border-white shadow-[0_20px_50px_rgba(11,21,40,0.08)]">
+            <img src="https://images.unsplash.com/photo-1627123424574-724758594e93?w=400&h=400&fit=crop" alt="Lost Wallet" className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" />
           </div>
-          <div className="bg-[#0B1528] p-12 xl:p-14 rounded-[40px] flex flex-col items-center text-center shadow-2xl shadow-[#0B1528]/30 hover:-translate-y-2 transition-transform duration-300 md:-translate-y-10">
-            <div className="w-24 h-24 mb-6 text-[#5cb9a5]">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-full h-full"
-              >
-                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M23 21v-2a4 4 0 00-3-3.87" />
-                <path d="M16 3.13a4 4 0 010 7.75" />
-              </svg>
-            </div>
-            <div className="text-6xl font-black text-white/10 mb-3">02</div>
-            <h4 className="text-2xl font-bold text-white mb-3">Smart Match</h4>
-            <p className="text-slate-400 text-[16px] leading-relaxed font-medium">
-              Our system instantly scans posts and notifies you when a potential
-              match appears nearby.
-            </p>
+          <div className="bg-white px-5 py-2.5 rounded-full border border-slate-100 shadow-lg flex items-center gap-2.5 -mt-6 z-10 text-[13px] font-black text-[#0B1528]">
+            <div className="w-2.5 h-2.5 bg-[#5cb9a5] rounded-full"></div>
+            AI-Powered Item Mastery
           </div>
-          <div className="bg-white p-12 xl:p-14 rounded-[40px] flex flex-col items-center text-center shadow-2xl shadow-slate-200/50 hover:-translate-y-2 transition-transform duration-300 border border-slate-50">
-            <div className="w-24 h-24 mb-6 text-[#5cb9a5]">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-full h-full"
-              >
-                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-              </svg>
+        </div>
+
+        {/* Right Graphic (Lost Phone) */}
+        <div className="absolute right-[2%] top-[40%] hidden xl:flex flex-col items-center animate-fade-up" style={{ animationDelay: '0.3s' }}>
+          <div className="w-[320px] h-[320px] bg-white rounded-full flex items-center justify-center overflow-hidden border-[6px] border-white shadow-[0_20px_50px_rgba(11,21,40,0.08)]">
+            <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop" alt="Lost Smartphone" className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" />
+          </div>
+          <div className="bg-white px-6 py-4 rounded-[2rem] border border-slate-100 shadow-xl flex flex-col items-center gap-1 absolute -right-6 top-1/2 z-10 text-center">
+             <span className="text-[12px] font-black text-slate-500">Get</span>
+             <span className="text-2xl font-black text-[#5cb9a5]">98%</span>
+             <span className="text-[12px] font-black text-[#5cb9a5]">Match Rate</span>
+             <span className="text-[10px] font-bold text-slate-400 mt-1">with detailed <br/> descriptions</span>
+          </div>
+          <div className="absolute -top-10 right-10 bg-white px-4 py-2 rounded-full border border-slate-100 shadow-sm text-[12px] font-black text-slate-600">
+            Smart way to recover
+          </div>
+        </div>
+
+        {/* Scattered Background Elements */}
+        <div className="absolute left-[15%] bottom-[15%] w-16 h-16 bg-white rounded-2xl shadow-xl flex items-center justify-center p-3 hidden lg:flex border border-slate-50">
+           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0B1528" strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
+        <div className="absolute left-[20%] bottom-[5%] w-16 h-16 bg-white rounded-2xl shadow-xl flex items-center justify-center p-3 hidden lg:flex border border-slate-50">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+        </div>
+
+      </main>
+
+      {/* ══════════════════════════════════════════════════════
+          FEATURES — Premium Dark Cards
+      ══════════════════════════════════════════════════════ */}
+      <section className="px-6 xl:px-12 max-w-7xl mx-auto w-full relative z-10 my-20 animate-fade-up bg-[#0B1528] rounded-[3rem] py-16" style={{ animationDelay: '0.4s' }}>
+        <div className="grid md:grid-cols-3 gap-6 xl:gap-8 px-8">
+          <div className="glass-dark p-10 rounded-[2rem] flex flex-col items-start gap-8 hover:-translate-y-3 transition-all duration-500 group">
+            <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 group-hover:bg-[#5cb9a5]/20 group-hover:border-[#5cb9a5]/30 transition-all">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
             </div>
-            <div className="text-6xl font-black text-slate-100 mb-3">03</div>
-            <h4 className="text-2xl font-bold text-[#0B1528] mb-3">
-              Connect & Recover
-            </h4>
-            <p className="text-slate-500 text-[16px] leading-relaxed font-medium">
-              Chat securely through the platform to arrange a safe meetup and
-              recover your item.
-            </p>
+            <div>
+              <h4 className="text-2xl font-black text-white mb-3 tracking-tight">Location Intelligence</h4>
+              <p className="text-slate-400 text-[16px] leading-relaxed font-medium">
+                Hyper-local item tracking that connects you with findings in your immediate vicinity.
+              </p>
+            </div>
+          </div>
+
+          <div className="glass-dark p-10 rounded-[2rem] flex flex-col items-start gap-8 hover:-translate-y-3 transition-all duration-500 group">
+            <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 group-hover:bg-[#5cb9a5]/20 group-hover:border-[#5cb9a5]/30 transition-all">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="2.5"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" /></svg>
+            </div>
+            <div>
+              <h4 className="text-2xl font-black text-white mb-3 tracking-tight">Neural Matching</h4>
+              <p className="text-slate-400 text-[16px] leading-relaxed font-medium">
+                Our AI analyzes description patterns to find your belongings with surgical precision.
+              </p>
+            </div>
+          </div>
+
+          <div className="glass-dark p-10 rounded-[2rem] flex flex-col items-start gap-8 hover:-translate-y-3 transition-all duration-500 group">
+            <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 group-hover:bg-[#5cb9a5]/20 group-hover:border-[#5cb9a5]/30 transition-all">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+            </div>
+            <div>
+              <h4 className="text-2xl font-black text-white mb-3 tracking-tight">Direct Connection</h4>
+              <p className="text-slate-400 text-[16px] leading-relaxed font-medium">
+                Securely message finders through our encrypted gateway to arrange safe recovery.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          FINAL CTA
+          HOW IT WORKS — Modern Flow
       ══════════════════════════════════════════════════════ */}
-      <section className="px-6 xl:px-16 max-w-7xl mx-auto w-full mb-28 relative z-10">
-        <div className="bg-[#0B1528] rounded-[40px] px-12 py-20 flex flex-col md:flex-row items-center justify-between gap-10 shadow-2xl shadow-[#0B1528]/30 overflow-hidden relative">
-          <div className="absolute -right-24 -top-24 w-[380px] h-[380px] rounded-full bg-[#5cb9a5]/10 pointer-events-none"></div>
-          <div className="absolute -left-16 -bottom-20 w-[280px] h-[280px] rounded-full bg-[#5cb9a5]/5 pointer-events-none"></div>
-          <div className="relative z-10 max-w-xl">
-            <h3 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
-              Find what matters.
-              <br />
-              <span className="text-[#5cb9a5]">Helping is free.</span>
+      <section className="mt-32 px-6 xl:px-12 max-w-7xl mx-auto w-full mb-32 relative z-10 animate-fade-up" style={{ animationDelay: '0.6s' }}>
+        <div className="text-center lg:text-left mb-20 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+          <div>
+            <h3 className="text-[2.8rem] md:text-[3.5rem] font-black text-[#0B1528] tracking-tighter leading-none mb-6">
+              The Path to <br /> Recovery
             </h3>
-            <p className="text-slate-400 text-lg leading-relaxed">
-              Join thousands of community members who've already reconnected
-              with their belongings. No fees, no friction.
+            <p className="text-xl text-slate-500 max-w-lg leading-relaxed font-semibold">
+              Reclaiming your belongings shouldn't be a struggle. We’ve simplified the process into three seamless transitions.
             </p>
           </div>
-          <div className="relative z-10 flex flex-col sm:flex-row gap-4 shrink-0">
-            <button onClick={() => setFormType('found')} className="bg-[#5cb9a5] text-white px-9 py-4 rounded-full font-bold text-[15px] shadow-xl shadow-[#5cb9a5]/30 hover:-translate-y-1 hover:bg-[#4ea693] transition-all duration-300 whitespace-nowrap">
+          <div className="hidden lg:block w-32 h-32 text-[#5cb9a5]/20">
+            <svg viewBox="0 0 100 100" fill="currentColor"><circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="10 6" /></svg>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 xl:gap-10">
+          <div className="group relative bg-white/60 backdrop-blur-md border border-white/50 p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/20 hover:-translate-y-2 transition-all duration-300">
+            <div className="text-[7rem] font-black text-slate-300/60 absolute -top-12 -left-2 pointer-events-none group-hover:text-[#5cb9a5]/20 transition-colors">01</div>
+            <div className="relative z-10">
+              <h4 className="text-2xl font-black text-[#0B1528] mb-4">Precision Reporting</h4>
+              <p className="text-slate-500 text-[16px] leading-relaxed font-bold">
+                Log your item with AI-enhanced details. High-fidelity descriptions lead to higher recovery odds.
+              </p>
+            </div>
+          </div>
+
+          <div className="group relative bg-white/60 backdrop-blur-md border border-white/50 p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/20 hover:-translate-y-2 transition-all duration-300">
+            <div className="text-[7rem] font-black text-slate-300/60 absolute -top-12 -left-2 pointer-events-none group-hover:text-[#5cb9a5]/20 transition-colors">02</div>
+            <div className="relative z-10">
+              <h4 className="text-2xl font-black text-[#0B1528] mb-4">Elastic Matching</h4>
+              <p className="text-slate-500 text-[16px] leading-relaxed font-bold">
+                Our engine cross-references millions of data points to notify you of potential matches instantly.
+              </p>
+            </div>
+          </div>
+
+          <div className="group relative bg-white/60 backdrop-blur-md border border-white/50 p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/20 hover:-translate-y-2 transition-all duration-300">
+            <div className="text-[7rem] font-black text-slate-300/60 absolute -top-12 -left-2 pointer-events-none group-hover:text-[#5cb9a5]/20 transition-colors">03</div>
+            <div className="relative z-10">
+              <h4 className="text-2xl font-black text-[#0B1528] mb-4">Verification & Handover</h4>
+              <p className="text-slate-500 text-[16px] leading-relaxed font-bold">
+                Securely verify identity and item details before arranging a safe community exchange.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          FINAL CTA — State of the Art
+      ══════════════════════════════════════════════════════ */}
+      <section className="px-6 xl:px-12 max-w-7xl mx-auto w-full mb-32 relative z-10">
+        <div className="bg-[#0B1528] rounded-[4rem] px-8 md:px-20 py-24 flex flex-col lg:flex-row items-center justify-between gap-12 shadow-[0_40px_100px_rgba(11,21,40,0.3)] overflow-hidden relative group">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1a2b4b] to-[#0B1528] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+          <div className="absolute -right-24 -top-24 w-[500px] h-[500px] rounded-full bg-[#5cb9a5]/5 blur-[100px] pointer-events-none"></div>
+          <div className="absolute -left-24 -bottom-24 w-[400px] h-[400px] rounded-full bg-[#5cb9a5]/5 blur-[80px] pointer-events-none"></div>
+
+          <div className="relative z-10 max-w-2xl text-center lg:text-left">
+            <h3 className="text-4xl md:text-[3.5rem] font-black text-white tracking-tighter mb-8 leading-[1.1]">
+              Ready to find <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5cb9a5] to-[#80dfca]">What Matters?</span>
+            </h3>
+            <p className="text-slate-400 text-xl font-semibold leading-relaxed max-w-lg mx-auto lg:mx-0">
+              Join the world's most trusted community-driven recovery network. Join for free, stay for peace of mind.
+            </p>
+          </div>
+
+          <div className="relative z-10 flex flex-col sm:flex-row gap-5 shrink-0 w-full lg:w-auto">
+            <button onClick={() => handleAction('found')} className="bg-[#5cb9a5] text-white px-12 py-6 rounded-full font-black text-[17px] shadow-2xl shadow-[#5cb9a5]/30 hover:-translate-y-2 hover:bg-[#4ea693] transition-all duration-300 whitespace-nowrap w-full sm:w-auto">
               Report Found Item
             </button>
-            <button onClick={() => setFormType('lost')} className="bg-white/10 border border-white/20 text-white px-9 py-4 rounded-full font-bold text-[15px] hover:-translate-y-1 hover:bg-white/20 transition-all duration-300 whitespace-nowrap">
-              Report Lost Item
+            <button onClick={() => handleAction('lost')} className="bg-white/5 border-2 border-white/10 text-white px-12 py-6 rounded-full font-black text-[17px] hover:-translate-y-2 hover:bg-white/10 transition-all duration-300 whitespace-nowrap w-full sm:w-auto backdrop-blur-sm">
+              I Lost Something
             </button>
           </div>
         </div>
@@ -621,33 +354,38 @@ function Home() {
           AI REPORT MODAL
       ══════════════════════════════════════════════════════ */}
       {formType && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
-          <div className="bg-white w-full max-w-2xl rounded-[32px] shadow-2xl border border-white/20 overflow-hidden">
-            <div className="p-10">
-              <div className="flex justify-between items-center mb-8">
-                <h2 className="text-3xl font-extrabold text-[#0B1528] tracking-tight">{formType === 'lost' ? 'Report a Lost Item' : 'Report a Found Item'}</h2>
-                <button onClick={() => setFormType(null)} className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-[0_32px_100px_rgba(0,0,0,0.3)] overflow-hidden animate-in zoom-in-95 duration-300 border border-slate-100">
+            <div className="p-8 md:p-12">
+              <div className="flex justify-between items-center mb-8 pb-4 border-b border-slate-100">
+                <h2 className="text-2xl md:text-3xl font-black text-[#0B1528]">{formType === 'lost' ? 'Report Lost Item' : 'Submit Found Item'}</h2>
+                <button onClick={() => setFormType(null)} className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 hover:bg-[#0B1528] hover:text-white transition-all">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
                 </button>
               </div>
               <div className="space-y-6">
                 <div className="flex flex-col">
-                  <label className="text-sm font-bold text-slate-700 mb-3">{formType === 'lost' ? 'What did you lose?' : 'What did you find?'} <span className="text-slate-400 font-normal ml-1">(Brief description)</span></label>
-                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="w-full border-2 border-slate-100 bg-slate-50/50 p-5 rounded-2xl focus:ring-4 focus:ring-teal-500/10 focus:border-[#5cb9a5] focus:bg-white outline-none transition-all resize-none min-h-[140px] text-slate-800" placeholder={formType === 'lost' ? "e.g. black leather wallet near the central library yesterday around 4 PM..." : "e.g. found a black leather wallet near the central library today..."} />
-                  <button onClick={generateDescription} disabled={loading} className="mt-4 self-start bg-[#0B1528] text-white px-7 py-3.5 rounded-full font-semibold hover:bg-[#152342] transition-colors shadow-lg disabled:opacity-50 flex items-center gap-2">
-                    {loading ? "Generating..." : "✨ Refine with AI"}
+                  <label className="text-[14px] font-black text-slate-800 mb-2 uppercase tracking-wider">{formType === 'lost' ? 'What did you lose?' : 'What did you find?'} </label>
+                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="w-full border-2 border-slate-100 bg-slate-50/50 p-5 rounded-2xl focus:ring-4 focus:ring-[#5cb9a5]/10 focus:border-[#5cb9a5] focus:bg-white outline-none transition-all resize-none min-h-[140px] text-slate-800 font-semibold" placeholder={formType === 'lost' ? "Describe the item in detail (brand, color, location)..." : "Describe what you found and where..."} />
+                  <button onClick={generateDescription} disabled={loadingDesc} className="mt-4 self-start bg-white border-2 border-[#0B1528] text-[#0B1528] px-6 py-2.5 rounded-xl font-black text-[14px] hover:bg-slate-50 transition-all disabled:opacity-50 flex items-center gap-2">
+                    {loadingDesc ? "Optimizing..." : "✨ Enhance Description with AI"}
                   </button>
                 </div>
                 <div className="flex flex-col pt-2">
-                  <label className="text-sm font-bold text-slate-700 mb-3">Title</label>
-                  <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full border-2 border-slate-100 bg-slate-50/50 p-5 rounded-2xl focus:ring-4 focus:ring-teal-500/10 focus:border-[#5cb9a5] focus:bg-white outline-none transition-all text-slate-800" placeholder={formType === 'lost' ? "e.g. Lost Black Leather Wallet" : "e.g. Found Black Leather Wallet"} />
-                  <button onClick={generateTitle} disabled={loading} className="mt-4 self-start bg-teal-50 text-[#3b5e5a] border border-teal-200 px-7 py-3.5 rounded-full font-semibold hover:bg-teal-100 transition-colors disabled:opacity-50 flex items-center gap-2">
-                    {loading ? "Generating..." : "💡 Auto-Generate Title"}
+                  <label className="text-[14px] font-black text-slate-800 mb-2 uppercase tracking-wider">Generated Title</label>
+                  <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full border-2 border-slate-100 bg-slate-50/50 p-5 rounded-2xl focus:ring-4 focus:ring-[#5cb9a5]/10 focus:border-[#5cb9a5] focus:bg-white outline-none transition-all text-slate-800 font-bold" placeholder="Auto-generated title..." />
+                  <button onClick={generateTitle} disabled={loadingTitle} className="mt-4 self-start bg-[#5cb9a5]/10 text-[#2d5c53] px-6 py-2.5 rounded-xl font-black text-[14px] hover:bg-[#5cb9a5]/20 transition-all disabled:opacity-50 border border-[#5cb9a5]/20">
+                    {loadingTitle ? "Generating..." : "💡 Generate Smart Title"}
                   </button>
                 </div>
-                <div className="pt-4 border-t border-slate-100">
-                  <button className="w-full bg-[#5cb9a5] text-white px-6 py-5 rounded-full font-bold shadow-xl shadow-teal-500/20 hover:bg-[#4ea693] hover:-translate-y-1 transition-all text-lg">
-                    Submit Report
+                <div className="pt-6 mt-4">
+                  <button onClick={() => {
+                    alert("Report submitted successfully!");
+                    setFormType(null);
+                    setTitle("");
+                    setDescription("");
+                  }} className="w-full bg-[#5cb9a5] text-white px-6 py-4 rounded-2xl font-black shadow-[0_15px_30px_rgba(92,185,165,0.25)] hover:bg-[#4ea693] hover:-translate-y-1 transition-all text-lg">
+                    Submit Final Report
                   </button>
                 </div>
               </div>
@@ -659,4 +397,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default App;
