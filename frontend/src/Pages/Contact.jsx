@@ -1,147 +1,167 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-function Contact() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
-  const [status, setStatus] = useState(null);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setStatus("Message sent successfully! We will get back to you shortly.");
-    setFormData({ name: "", email: "", subject: "", message: "" });
-    setTimeout(() => setStatus(null), 4000);
-  };
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
+const Contact = () => {
   return (
-    <div className="w-full relative overflow-hidden font-sans text-slate-800 pb-12">
-      <div className="relative z-10 flex flex-col items-center">
+    <div className="min-h-screen w-full font-sans text-[#0B1528] relative overflow-x-hidden flex flex-col">
+      {/* ── INLINE STYLES FOR CONSISTENCY ── */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .text-outline {
+          color: transparent;
+          -webkit-text-stroke: 1px rgba(11, 21, 40, 0.08);
+        }
+        .text-outline-teal {
+          color: transparent;
+          -webkit-text-stroke: 1px rgba(92, 185, 165, 0.25);
+        }
+      `}} />
 
-        {/* Header Section */}
-        <section className="relative flex flex-col items-center text-center mt-8 px-6 max-w-4xl mx-auto w-full">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-[#0B1528] tracking-tight mb-4 font-[serif]">
-            Get In Touch
+      {/* Large Faded Background Typography */}
+      <span className="absolute top-[15%] left-[-2%] text-[clamp(6rem,15vw,12rem)] font-black text-outline pointer-events-none select-none -rotate-12 z-0 opacity-60">CONNECT</span>
+      <span className="absolute top-[60%] left-[10%] text-[clamp(4rem,10vw,10rem)] font-black text-outline-teal pointer-events-none select-none rotate-6 z-0 opacity-50">SUPPORT</span>
+      <span className="absolute top-[25%] right-[2%] text-[clamp(6rem,15vw,12rem)] font-black text-outline pointer-events-none select-none -rotate-6 z-0 opacity-60">HELP</span>
+      <span className="absolute bottom-[10%] right-[10%] text-[clamp(4rem,10vw,8rem)] font-black text-outline-teal pointer-events-none select-none z-0 opacity-50">REACH</span>
+
+      {/* ── MAIN CONTENT ── */}
+      <main className="relative z-10 max-w-6xl mx-auto px-6 pt-36 md:pt-44 pb-24">
+        
+        {/* Header Section: Centered and Clean */}
+        <div className="text-center mb-16 md:mb-20 space-y-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-[#0B1528]">
+            Let's <span className="text-[#5cb9a5]">Connect</span>
           </h1>
-          <p className="text-base text-slate-500 font-medium max-w-2xl leading-relaxed">
-            Have questions about our platform or need support with a reported item? We're here to help you around the clock.
+          <p className="max-w-xl mx-auto text-slate-500 text-base md:text-lg font-medium leading-relaxed">
+            Quick question or deep collaboration? <br className="hidden md:block"/> 
+            We're dedicated to bringing your items home.
           </p>
-        </section>
+        </div>
 
-        {/* Contact Layout */}
-        <section className="px-6 mx-auto w-full relative z-10" style={{ width: "70%", marginTop: "65px" }}>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-
-            {/* Left side: Contact Information Cards */}
-            <div className="flex flex-col gap-6 justify-between">
-              <div className="bg-white p-6 md:p-8 rounded-[2rem] shadow-xl shadow-slate-200/50 hover:-translate-y-2 transition-transform duration-300 border border-slate-50 flex-1 flex flex-col justify-center">
-                <div className="w-12 h-12 bg-teal-50 rounded-2xl flex items-center justify-center text-[#5cb9a5] mb-5 shadow-inner">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                </div>
-                <h4 className="text-xl font-bold text-[#0B1528] mb-2">Email Support</h4>
-                <p className="text-slate-500 font-medium text-[15px] mb-4 leading-relaxed">Drop us a line anytime. We reply within 24 hours.</p>
-                <div className="text-[#5cb9a5] font-bold text-[15px] tracking-wide">support@lostfound.com</div>
-              </div>
-
-              <div className="bg-[#0B1528] p-6 md:p-8 rounded-[2rem] shadow-2xl shadow-[#0B1528]/20 hover:-translate-y-2 transition-transform duration-300 flex-1 flex flex-col justify-center">
-                <div className="w-12 h-12 bg-[#1A2642] rounded-2xl flex items-center justify-center text-[#5cb9a5] mb-5 shadow-inner border border-white/5">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" /></svg>
-                </div>
-                <h4 className="text-xl font-bold text-white mb-2">Call Us Directly</h4>
-                <p className="text-slate-400 font-medium text-[15px] mb-4 leading-relaxed">Need urgent help? Give us a call.</p>
-                <div className="text-white font-bold text-[15px] tracking-wide">+1 (800) 123-4567</div>
-              </div>
-            </div>
-
-            {/* Right side: The Form Card */}
-            <div className="lg:col-span-2 bg-white p-8 lg:p-10 rounded-3xl shadow-2xl shadow-slate-200/50 border border-slate-50 relative overflow-hidden h-full">
-              {/* Decorative background element on form card */}
-              <div className="absolute -top-16 -right-16 w-32 h-32 bg-teal-50 rounded-full blur-[40px] pointer-events-none"></div>
-
-              <h3 className="text-2xl font-extrabold text-[#0B1528] mb-6 relative z-10">Send a Message</h3>
-
-              {status && (
-                <div className="mb-4 p-4 bg-[#f8fbfa] border border-teal-100 text-teal-800 rounded-xl font-bold text-sm animate-fade-in flex items-center gap-3 relative z-10">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="text-teal-500"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
-                  {status}
-                </div>
-              )}
-
-              <form onSubmit={handleSubmit} className="flex flex-col gap-5 relative z-10">
-                <div className="flex flex-col sm:flex-row gap-5">
-                  <div className="w-full">
-                    <label className="block text-slate-700 font-bold mb-2 text-sm">Your Name</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      required
-                      placeholder="John Doe"
-                      className="w-full bg-[#f8fbfa] border border-slate-200 text-slate-800 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-[#5cb9a5] focus:bg-white transition-all shadow-inner"
-                    />
+        {/* 2-Column Responsive Grid: Prevents horizontal stretching */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-start">
+          
+          {/* Left Column: Info & Stats Group */}
+          <div className="md:col-span-5 flex flex-col gap-6 md:gap-8">
+            
+            {/* Contact Details Card */}
+            <div className="bg-white/80 backdrop-blur-md border border-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/40 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#5cb9a5]/10 to-transparent rounded-full blur-3xl -z-10 -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700"></div>
+              <div className="space-y-8 relative z-10">
+                <div className="flex items-center gap-5 group/item cursor-pointer">
+                  <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-[#0B1528] shrink-0 group-hover/item:bg-[#5cb9a5] group-hover/item:text-white transition-all duration-300 shadow-sm">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg>
                   </div>
-                  <div className="w-full">
-                    <label className="block text-slate-700 font-bold mb-2 text-sm">Email Address</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      placeholder="john@example.com"
-                      className="w-full bg-[#f8fbfa] border border-slate-200 text-slate-800 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-[#5cb9a5] focus:bg-white transition-all shadow-inner"
-                    />
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-0.5 group-hover/item:text-[#5cb9a5] transition-colors">Email</span>
+                    <p className="text-base font-bold text-[#0B1528]">hello@campuspath.ai</p>
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-slate-700 font-bold mb-2 text-sm">Subject</label>
-                  <input
-                    type="text"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                    placeholder="How can we help?"
-                    className="w-full bg-[#f8fbfa] border border-slate-200 text-slate-800 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-[#5cb9a5] focus:bg-white transition-all shadow-inner"
-                  />
+                <div className="flex items-center gap-5 group/item cursor-pointer">
+                  <div className="w-12 h-12 rounded-xl bg-[#5cb9a5]/10 flex items-center justify-center text-[#5cb9a5] shrink-0 group-hover/item:bg-[#5cb9a5] group-hover/item:text-white transition-all duration-300 shadow-sm">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-0.5 group-hover/item:text-[#5cb9a5] transition-colors">Support</span>
+                    <p className="text-base font-bold text-[#0B1528]">+91 999 888 7776</p>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-slate-700 font-bold mb-2 text-sm">Message</label>
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    rows="3"
-                    placeholder="Write your message here..."
-                    className="w-full bg-[#f8fbfa] border border-slate-200 text-slate-800 text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-[#5cb9a5] focus:bg-white transition-all shadow-inner resize-none"
-                  ></textarea>
+                <div className="flex items-center gap-5 group/item cursor-pointer">
+                  <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-[#0B1528] shrink-0 group-hover/item:bg-[#0B1528] group-hover/item:text-white transition-all duration-300 shadow-sm">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-0.5 group-hover/item:text-[#5cb9a5] transition-colors">Office</span>
+                    <p className="text-base font-bold text-[#0B1528]">New Delhi, IN</p>
+                  </div>
                 </div>
-
-                <button
-                  type="submit"
-                  className="mt-2 bg-[#0B1528] text-white px-8 py-3 rounded-full font-bold text-sm shadow-xl shadow-[#0B1528]/20 hover:-translate-y-1 hover:bg-[#152342] transition-all duration-300 w-full sm:w-auto self-start flex items-center justify-center gap-2 block mx-auto"
-                >
-                  Send Message
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
-                </button>
-              </form>
+              </div>
             </div>
 
+            {/* Stats Card - Dark Accented */}
+            <div className="bg-[#0B1528] p-8 rounded-[2rem] text-white shadow-2xl shadow-[#0B1528]/20 border border-white/5 relative overflow-hidden group hover:-translate-y-1 transition-transform duration-500">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#5cb9a5] block mb-3 relative z-10">Global Community</span>
+              <h4 className="text-2xl lg:text-3xl font-bold leading-tight mb-6 relative z-10">
+                150+ Happy <br/>Reconnections
+              </h4>
+              <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden relative z-10">
+                <div className="h-full w-4/5 bg-[#5cb9a5] rounded-full relative overflow-hidden">
+                  <div className="absolute top-0 right-0 bottom-0 w-20 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
+                </div>
+              </div>
+            </div>
           </div>
-        </section>
-      </div>
+
+          {/* Right Column: Contact Form Card */}
+          <div className="md:col-span-7 bg-white p-8 md:p-12 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 relative">
+            <h3 className="text-2xl font-black text-[#0B1528] mb-10">Drop us a line</h3>
+            
+            <form className="space-y-10" onSubmit={(e) => e.preventDefault()}>
+              <div className="grid lg:grid-cols-2 gap-8">
+                {/* Name Input */}
+                <div className="relative group">
+                  <input 
+                    type="text" 
+                    id="name" 
+                    className="w-full bg-transparent border-b-2 border-slate-100 py-3 text-base font-medium outline-none focus:border-[#5cb9a5] transition-colors peer" 
+                    placeholder=" "
+                    required
+                  />
+                  <label htmlFor="name" className="absolute left-0 top-3 text-slate-400 font-bold uppercase text-[10px] tracking-widest transition-all peer-focus:-top-6 peer-focus:text-[#5cb9a5] peer-[:not(:placeholder-shown)]:-top-6 cursor-text">
+                    Full Name
+                  </label>
+                </div>
+
+                {/* Email Input */}
+                <div className="relative group">
+                  <input 
+                    type="email" 
+                    id="email" 
+                    className="w-full bg-transparent border-b-2 border-slate-100 py-3 text-base font-medium outline-none focus:border-[#5cb9a5] transition-colors peer" 
+                    placeholder=" "
+                    required
+                  />
+                  <label htmlFor="email" className="absolute left-0 top-3 text-slate-400 font-bold uppercase text-[10px] tracking-widest transition-all peer-focus:-top-6 peer-focus:text-[#5cb9a5] peer-[:not(:placeholder-shown)]:-top-6 cursor-text">
+                    Email Address
+                  </label>
+                </div>
+              </div>
+
+              {/* Message Input */}
+              <div className="relative group">
+                <textarea 
+                  id="message" 
+                  rows="4"
+                  className="w-full bg-transparent border-b-2 border-slate-100 py-3 text-base font-medium outline-none focus:border-[#5cb9a5] transition-colors peer resize-none" 
+                  placeholder=" "
+                  required
+                ></textarea>
+                <label htmlFor="message" className="absolute left-0 top-3 text-slate-400 font-bold uppercase text-[10px] tracking-widest transition-all peer-focus:-top-6 peer-focus:text-[#5cb9a5] peer-[:not(:placeholder-shown)]:-top-6 cursor-text">
+                  How can we help?
+                </label>
+              </div>
+
+              {/* Submit Action */}
+              <div className="pt-4">
+                <button className="bg-[#0B1528] text-white flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-bold text-sm mx-auto md:mx-0 w-full md:w-auto uppercase tracking-widest hover:bg-[#1a2b4a] hover:-translate-y-1 transition-all duration-300 shadow-lg shadow-[#0B1528]/10 group">
+                  Send Message
+                  <svg className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* Minimal Footer Info */}
+        <footer className="mt-24 pt-8 border-t border-slate-200/50 text-center">
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            &copy; {new Date().getFullYear()} Lost & Found Network • CampusPath
+          </p>
+        </footer>
+
+      </main>
     </div>
   );
-}
+};
 
 export default Contact;
