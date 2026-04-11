@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from "react";
+import { useAuth, useClerk } from "@clerk/clerk-react";
 
-const API_KEY = "PUT_YOUR_API_KEY";
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 function App() {
+  const { isSignedIn } = useAuth();
+  const clerk = useClerk();
   const [formType, setFormType] = useState(null);
+
+  const handleAction = (type) => {
+    if (isSignedIn) {
+      setFormType(type);
+    } else {
+      clerk.openSignIn({ forceRedirectUrl: `/app?action=${type}` });
+    }
+  };
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loadingDesc, setLoadingDesc] = useState(false);
+  const [loadingTitle, setLoadingTitle] = useState(false);
 
   useEffect(() => {
     if (description) console.log("Description updated:", description);
@@ -14,7 +26,7 @@ function App() {
 
   const generateDescription = async () => {
     if (!description.trim()) return;
-    setLoading(true);
+    setLoadingDesc(true);
     try {
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`,
@@ -37,7 +49,7 @@ function App() {
     } catch (e) {
       alert("Error generating description.");
     } finally {
-      setLoading(false);
+      setLoadingDesc(false);
     }
   };
 
@@ -46,7 +58,7 @@ function App() {
       alert("Please write a description first.");
       return;
     }
-    setLoading(true);
+    setLoadingTitle(true);
     try {
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`,
@@ -69,7 +81,7 @@ function App() {
     } catch (e) {
       alert("Error generating title.");
     } finally {
-      setLoading(false);
+      setLoadingTitle(false);
     }
   };
 
@@ -154,11 +166,11 @@ function App() {
 
           {/* ── CTAs ── */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 w-full">
-            <button onClick={() => setFormType('lost')} className="flex items-center justify-center gap-2 bg-[#0B1528] text-white px-8 py-4 rounded-xl font-black text-[16px] shadow-xl shadow-[#0B1528]/20 hover:-translate-y-1 hover:bg-[#152342] transition-all w-full sm:w-auto min-w-[200px]">
+            <button onClick={() => handleAction('lost')} className="flex items-center justify-center gap-2 bg-[#0B1528] text-white px-8 py-4 rounded-xl font-black text-[16px] shadow-xl shadow-[#0B1528]/20 hover:-translate-y-1 hover:bg-[#152342] transition-all w-full sm:w-auto min-w-[200px]">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
               Report Lost Item
             </button>
-            <button onClick={() => setFormType('found')} className="bg-[#5cb9a5] text-white px-8 py-4 rounded-xl font-black text-[16px] shadow-xl shadow-[#5cb9a5]/25 hover:-translate-y-1 hover:bg-[#4ea693] transition-all w-full sm:w-auto min-w-[200px]">
+            <button onClick={() => handleAction('found')} className="bg-[#5cb9a5] text-white px-8 py-4 rounded-xl font-black text-[16px] shadow-xl shadow-[#5cb9a5]/25 hover:-translate-y-1 hover:bg-[#4ea693] transition-all w-full sm:w-auto min-w-[200px]">
               Submit Found Item
             </button>
           </div>
@@ -328,10 +340,10 @@ function App() {
           </div>
 
           <div className="relative z-10 flex flex-col sm:flex-row gap-5 shrink-0 w-full lg:w-auto">
-            <button onClick={() => setFormType('found')} className="bg-[#5cb9a5] text-white px-12 py-6 rounded-full font-black text-[17px] shadow-2xl shadow-[#5cb9a5]/30 hover:-translate-y-2 hover:bg-[#4ea693] transition-all duration-300 whitespace-nowrap w-full sm:w-auto">
+            <button onClick={() => handleAction('found')} className="bg-[#5cb9a5] text-white px-12 py-6 rounded-full font-black text-[17px] shadow-2xl shadow-[#5cb9a5]/30 hover:-translate-y-2 hover:bg-[#4ea693] transition-all duration-300 whitespace-nowrap w-full sm:w-auto">
               Report Found Item
             </button>
-            <button onClick={() => setFormType('lost')} className="bg-white/5 border-2 border-white/10 text-white px-12 py-6 rounded-full font-black text-[17px] hover:-translate-y-2 hover:bg-white/10 transition-all duration-300 whitespace-nowrap w-full sm:w-auto backdrop-blur-sm">
+            <button onClick={() => handleAction('lost')} className="bg-white/5 border-2 border-white/10 text-white px-12 py-6 rounded-full font-black text-[17px] hover:-translate-y-2 hover:bg-white/10 transition-all duration-300 whitespace-nowrap w-full sm:w-auto backdrop-blur-sm">
               I Lost Something
             </button>
           </div>
@@ -355,19 +367,24 @@ function App() {
                 <div className="flex flex-col">
                   <label className="text-[14px] font-black text-slate-800 mb-2 uppercase tracking-wider">{formType === 'lost' ? 'What did you lose?' : 'What did you find?'} </label>
                   <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="w-full border-2 border-slate-100 bg-slate-50/50 p-5 rounded-2xl focus:ring-4 focus:ring-[#5cb9a5]/10 focus:border-[#5cb9a5] focus:bg-white outline-none transition-all resize-none min-h-[140px] text-slate-800 font-semibold" placeholder={formType === 'lost' ? "Describe the item in detail (brand, color, location)..." : "Describe what you found and where..."} />
-                  <button onClick={generateDescription} disabled={loading} className="mt-4 self-start bg-white border-2 border-[#0B1528] text-[#0B1528] px-6 py-2.5 rounded-xl font-black text-[14px] hover:bg-slate-50 transition-all disabled:opacity-50 flex items-center gap-2">
-                    {loading ? "Optimizing..." : "✨ Enhance Description with AI"}
+                  <button onClick={generateDescription} disabled={loadingDesc} className="mt-4 self-start bg-white border-2 border-[#0B1528] text-[#0B1528] px-6 py-2.5 rounded-xl font-black text-[14px] hover:bg-slate-50 transition-all disabled:opacity-50 flex items-center gap-2">
+                    {loadingDesc ? "Optimizing..." : "✨ Enhance Description with AI"}
                   </button>
                 </div>
                 <div className="flex flex-col pt-2">
                   <label className="text-[14px] font-black text-slate-800 mb-2 uppercase tracking-wider">Generated Title</label>
                   <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full border-2 border-slate-100 bg-slate-50/50 p-5 rounded-2xl focus:ring-4 focus:ring-[#5cb9a5]/10 focus:border-[#5cb9a5] focus:bg-white outline-none transition-all text-slate-800 font-bold" placeholder="Auto-generated title..." />
-                  <button onClick={generateTitle} disabled={loading} className="mt-4 self-start bg-[#5cb9a5]/10 text-[#2d5c53] px-6 py-2.5 rounded-xl font-black text-[14px] hover:bg-[#5cb9a5]/20 transition-all disabled:opacity-50 border border-[#5cb9a5]/20">
-                    {loading ? "Generating..." : "💡 Generate Smart Title"}
+                  <button onClick={generateTitle} disabled={loadingTitle} className="mt-4 self-start bg-[#5cb9a5]/10 text-[#2d5c53] px-6 py-2.5 rounded-xl font-black text-[14px] hover:bg-[#5cb9a5]/20 transition-all disabled:opacity-50 border border-[#5cb9a5]/20">
+                    {loadingTitle ? "Generating..." : "💡 Generate Smart Title"}
                   </button>
                 </div>
                 <div className="pt-6 mt-4">
-                  <button className="w-full bg-[#5cb9a5] text-white px-6 py-4 rounded-2xl font-black shadow-[0_15px_30px_rgba(92,185,165,0.25)] hover:bg-[#4ea693] hover:-translate-y-1 transition-all text-lg">
+                  <button onClick={() => {
+                    alert("Report submitted successfully!");
+                    setFormType(null);
+                    setTitle("");
+                    setDescription("");
+                  }} className="w-full bg-[#5cb9a5] text-white px-6 py-4 rounded-2xl font-black shadow-[0_15px_30px_rgba(92,185,165,0.25)] hover:bg-[#4ea693] hover:-translate-y-1 transition-all text-lg">
                     Submit Final Report
                   </button>
                 </div>
