@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recover — 1:1 Interactive Layout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111111;
+            color: #ffffff;
+            margin: 0;
+            overflow-x: hidden; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Outline Text (The giant R and r) */
+        .text-outline {
+            -webkit-text-stroke: 2px rgba(255, 255, 255, 0.15);
+            color: transparent;
+        }
+
+        /* Core Theme Colors */
+        .bg-brand { background-color: #ff9d1c; }
+        .text-brand { color: #ff9d1c; }
+        .border-brand { border-color: #ff9d1c; }
+
+        /* Dynamic Circles */
+        .hero-circle {
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        /* Hovering ANY circle brings it to the absolute front and scales it slightly */
+        .hero-circle:hover {
+            z-index: 50 !important;
+            transform: scale(1.05);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+        }
+
+        /* Default Stacking matching the image */
+        .circle-left {
+            z-index: 10;
+            margin-right: -120px;
+            background-color: #ff9d1c;
+            padding: 40px;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .circle-mid {
+            z-index: 20;
+            background-color: #222;
+        }
+
+        .circle-right {
+            z-index: 30;
+            margin-left: -120px;
+            background-color: #333;
+        }
+
+        /* Navigation Pills */
+        .nav-pill-container {
+            background-color: #1c1c1c;
+            border-radius: 999px;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-pill {
+            padding: 8px 24px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.2s;
+        }
+
+        .nav-pill.active {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        /* Side Icons */
+        .side-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .side-icon:hover {
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        /* Bottom Cards (Exact matching negative space) */
+        .info-card {
+            background-color: #161616;
+            border-radius: 24px;
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* The dark circle that creates the perfect split-mask effect from the image */
+        .mask-circle {
+            width: 280px;
+            height: 280px;
+            background-color: #161616;
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+        }
+
+        /* Custom Section Layouts */
+        .section-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            max-w-[1400px];
+            mx-auto;
+            position: relative;
+        }
+
+        @media (max-width: 1280px) {
+            .hero-circle { width: 320px; height: 320px; }
+            .circle-left { margin-right: -80px; }
+            .circle-right { margin-left: -80px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation (Now fixed to top for scrolling) -->
+    <header class="fixed top-0 w-full flex justify-between items-center px-10 py-6 z-[100] bg-[#111111]/80 backdrop-blur-md border-b border-white/5">
+        <!-- Logo -->
+        <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+            <!-- Iconic split square logo from image -->
+            <div class="w-7 h-7 relative flex items-center justify-center">
+                <div class="w-full h-full bg-brand rounded-sm absolute"></div>
+                <div class="w-full h-[3px] bg-[#111] absolute transform -rotate-45"></div>
+            </div>
+            <span class="text-xl font-bold tracking-tight">Recover</span>
+        </div>
+
+        <!-- Center Nav -->
+        <div class="hidden md:flex nav-pill-container" id="main-nav">
+            <a href="#home" class="nav-pill active">Home</a>
+            <a href="#about" class="nav-pill">About</a>
+            <a href="#reports" class="nav-pill">Reports</a>
+            <a href="#howitworks" class="nav-pill">How it works</a>
+        </div>
+
+        <!-- Right Nav -->
+        <div class="flex items-center gap-4">
+            <button class="px-6 py-2.5 rounded-full border border-white/20 text-sm font-medium hover:bg-white hover:text-black transition-colors">Log In</button>
+            <button class="px-6 py-2.5 rounded-full bg-brand text-black text-sm font-bold hover:opacity-90 transition-opacity">Sign Up</button>
+        </div>
+    </header>
+
+    <!-- Sidebars (Left & Right vertical icon pills) -->
+    <div class="fixed left-6 top-1/2 -translate-y-1/2 z-50 flex flex-col hidden md:flex">
+        <div class="side-icon"><i data-lucide="play" class="w-4 h-4 ml-0.5"></i></div>
+        <div class="side-icon"><i data-lucide="mic" class="w-4 h-4"></i></div>
+        <div class="side-icon"><i data-lucide="volume-2" class="w-4 h-4"></i></div>
+    </div>
+    
+    <div class="fixed right-6 top-1/2 -translate-y-1/2 z-50 flex flex-col hidden md:flex">
+        <div class="side-icon"><i data-lucide="instagram" class="w-4 h-4"></i></div>
+        <div class="side-icon"><i data-lucide="facebook" class="w-4 h-4"></i></div>
+        <div class="side-icon"><i data-lucide="twitter" class="w-4 h-4"></i></div>
+    </div>
+
+    <!-- MAIN SCROLLABLE CONTENT -->
+    <main class="flex-1 w-full mx-auto relative z-10">
+
+        <!-- 1. HOME SECTION -->
+        <section id="home" class="section-container px-16 pt-24 mb-20 relative">
+            
+            <!-- Giant Background Letters (Shifted 'r' slightly to the left) -->
+            <div class="absolute inset-0 flex justify-between items-center px-12 pointer-events-none z-0">
+                <span class="text-[35vw] font-black text-outline leading-none tracking-tighter">R</span>
+                <!-- Moved left by 8vw using relative positioning -->
+                <span class="text-[35vw] font-black text-outline leading-none tracking-tighter relative right-[8vw]">r</span>
+            </div>
+
+            <div class="relative z-10 w-full h-full flex flex-col justify-center">
+                <!-- Interactive Overlapping Circles -->
+                <div class="flex justify-center items-center h-[420px] mb-12">
+                    <!-- Left Circle (Orange) -->
+                    <div class="hero-circle circle-left">
+                        <i data-lucide="arrow-up-right" class="w-8 h-8 text-white mb-4"></i>
+                        <p class="text-white text-[15px] font-medium leading-relaxed max-w-[220px]">
+                            The platform helps hyperlocal communities bring their lost items back to safety.
+                        </p>
+                    </div>
+
+                    <!-- Middle Circle (Grayscale, Cut off by default, Full on hover) -->
+                    <div class="hero-circle circle-mid">
+                        <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=600" class="absolute inset-0 w-full h-full object-cover grayscale opacity-50" alt="Background">
+                        <h1 class="text-[5.5rem] font-black text-white relative z-10 tracking-tight ml-4">Recover</h1>
+                    </div>
+
+                    <!-- Right Circle (Color image with Learn More) -->
+                    <div class="hero-circle circle-right">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=600" class="absolute inset-0 w-full h-full object-cover opacity-80" alt="Foreground">
+                        <div class="relative z-10 absolute bottom-32 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-white text-black pl-5 pr-2 py-2 rounded-full shadow-xl">
+                            <span class="text-xs font-semibold">Learn More</span>
+                            <div class="w-8 h-8 rounded-full border border-black/20 flex items-center justify-center">
+                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3 Bottom Info Cards -->
+                <div class="grid grid-cols-3 gap-6">
+                    <!-- Card 1 -->
+                    <div class="info-card">
+                        <div class="w-1/2 p-8 flex flex-col justify-between z-10">
+                            <h3 class="text-[15px] font-bold leading-snug">Opportunity to report your own unique findings</h3>
+                            <button class="border border-white/30 rounded-full px-5 py-1.5 text-xs font-medium w-max hover:bg-white hover:text-black transition-colors">Explore</button>
+                        </div>
+                        <div class="mask-circle"></div>
+                        <div class="w-1/2 absolute right-0 inset-y-0 z-0">
+                            <div class="absolute inset-0 bg-brand mix-blend-overlay z-10 opacity-80"></div>
+                            <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover grayscale">
+                        </div>
+                        <div class="absolute top-4 right-4 z-20 text-white/50"><i data-lucide="arrow-up-right" class="w-5 h-5"></i></div>
+                    </div>
+
+                    <!-- Card 2 (With Inner Nav Pill) -->
+                    <div class="info-card">
+                        <div class="w-1/2 p-8 flex flex-col z-10">
+                            <h3 class="text-[15px] font-bold leading-snug">Support and feedback from the community</h3>
+                        </div>
+                        <div class="mask-circle"></div>
+                        <div class="w-1/2 absolute right-0 inset-y-0 z-0">
+                            <div class="absolute inset-0 bg-brand mix-blend-overlay z-10 opacity-80"></div>
+                            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover grayscale">
+                        </div>
+                        <div class="absolute top-4 right-4 z-20 text-white/50"><i data-lucide="arrow-up-right" class="w-5 h-5"></i></div>
+                        
+                        <div class="absolute bottom-5 left-1/2 -translate-x-1/2 w-[90%] h-12 bg-white/10 backdrop-blur-md rounded-full border border-white/10 flex items-center px-3 z-30 shadow-xl">
+                            <div class="flex items-center gap-2 text-white/80 px-2 text-[13px]">
+                                <i data-lucide="menu" class="w-4 h-4"></i> Menu
+                            </div>
+                            <div class="flex-1 flex justify-center gap-5 text-[13px] text-white/90">
+                                <span class="cursor-pointer hover:text-white">Records</span>
+                                <span class="cursor-pointer hover:text-white">Progress</span>
+                            </div>
+                            <div class="text-brand text-[13px] font-medium px-2 cursor-pointer border-l border-white/20 pl-3">
+                                Create +
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="info-card">
+                        <div class="w-1/2 p-8 flex flex-col justify-between z-10">
+                            <h3 class="text-[15px] font-bold leading-snug">Guaranteed security for every item returned</h3>
+                            <button class="border border-white/30 rounded-full px-5 py-1.5 text-xs font-medium w-max hover:bg-white hover:text-black transition-colors">Explore</button>
+                        </div>
+                        <div class="mask-circle"></div>
+                        <div class="w-1/2 absolute right-0 inset-y-0 z-0">
+                            <div class="absolute inset-0 bg-brand mix-blend-overlay z-10 opacity-80"></div>
+                            <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover grayscale">
+                        </div>
+                        <div class="absolute top-4 right-4 z-20 text-white/50"><i data-lucide="arrow-up-right" class="w-5 h-5"></i></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. ABOUT SECTION -->
+        <section id="about" class="section-container px-16 py-24 bg-[#0a0a0a] border-t border-white/5 relative">
+            <div class="flex flex-col lg:flex-row gap-16 items-center w-full z-10">
+                <div class="lg:w-1/2">
+                    <p class="text-brand text-[11px] font-bold uppercase tracking-[0.3em] mb-6">About Recover</p>
+                    <h2 class="text-5xl lg:text-7xl font-black mb-8 leading-[1.1] tracking-tighter">Empowering <br><span class="text-brand">Community</span> Trust.</h2>
+                    <p class="text-white/60 text-lg leading-relaxed mb-10 max-w-lg">
+                        We are transforming how hyperlocal communities handle lost and found items. By combining modern tracking networks with peer-to-peer verification, Recover ensures that misplaced items find their way home securely and promptly.
+                    </p>
+                    <div class="flex items-center gap-6">
+                        <button class="px-8 py-4 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition-colors">Read Our Mission</button>
+                        <a href="#" class="text-sm font-semibold border-b border-brand text-brand hover:text-white transition-colors pb-1">View Statistics</a>
+                    </div>
+                </div>
+
+                <div class="lg:w-1/2 flex justify-end">
+                    <div class="grid grid-cols-2 gap-4 w-full max-w-lg">
+                        <div class="bg-[#161616] p-8 rounded-3xl border border-white/5 flex flex-col justify-center aspect-square">
+                            <i data-lucide="shield-check" class="w-10 h-10 text-brand mb-6"></i>
+                            <h4 class="text-3xl font-black mb-2">100%</h4>
+                            <p class="text-sm text-white/50">Verified Users</p>
+                        </div>
+                        <div class="bg-brand p-8 rounded-3xl flex flex-col justify-center aspect-square text-black transform lg:translate-y-8">
+                            <i data-lucide="activity" class="w-10 h-10 mb-6"></i>
+                            <h4 class="text-3xl font-black mb-2">24/7</h4>
+                            <p class="text-sm font-semibold opacity-80">Live Matching</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. REPORTS SECTION -->
+        <section id="reports" class="section-container px-16 py-24">
+            <div class="w-full flex justify-between items-end mb-16">
+                <div>
+                    <h2 class="text-5xl font-black tracking-tighter mb-4">Latest <span class="text-outline text-brand" style="-webkit-text-stroke: 1px #ff9d1c;">Reports</span></h2>
+                    <p class="text-white/50 text-sm">Real-time feed of lost and found items in your proximity.</p>
+                </div>
+                <div class="nav-pill-container">
+                    <button class="nav-pill active">All</button>
+                    <button class="nav-pill">Lost</button>
+                    <button class="nav-pill">Found</button>
+                </div>
+            </div>
+
+            <!-- Feed Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+                <!-- Feed Item 1 -->
+                <div class="bg-[#161616] rounded-3xl p-6 border border-white/5 hover:border-brand/50 transition-colors group cursor-pointer flex flex-col">
+                    <div class="w-full h-48 bg-[#222] rounded-2xl mb-6 overflow-hidden relative">
+                        <div class="absolute inset-0 bg-brand/20 mix-blend-overlay z-10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+                        <span class="absolute top-3 left-3 z-20 bg-black/60 backdrop-blur-sm text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-white/10">Found</span>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">Silver Apple Watch</h4>
+                    <p class="text-sm text-white/50 mb-6 flex-1">Found near the central library entrance around 2 PM.</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-white/10">
+                        <span class="text-xs text-white/40 font-medium">12 mins ago</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 text-brand"></i>
+                    </div>
+                </div>
+
+                <!-- Feed Item 2 -->
+                <div class="bg-[#161616] rounded-3xl p-6 border border-white/5 hover:border-brand/50 transition-colors group cursor-pointer flex flex-col">
+                    <div class="w-full h-48 bg-[#222] rounded-2xl mb-6 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+                        <span class="absolute top-3 left-3 z-20 bg-brand text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">Lost</span>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">Black Leather Wallet</h4>
+                    <p class="text-sm text-white/50 mb-6 flex-1">Lost somewhere between the science block and cafeteria.</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-white/10">
+                        <span class="text-xs text-white/40 font-medium">1 hour ago</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 text-brand"></i>
+                    </div>
+                </div>
+
+                <!-- Feed Item 3 -->
+                <div class="bg-[#161616] rounded-3xl p-6 border border-white/5 hover:border-brand/50 transition-colors group cursor-pointer flex flex-col">
+                    <div class="w-full h-48 bg-[#222] rounded-2xl mb-6 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+                        <span class="absolute top-3 left-3 z-20 bg-black/60 backdrop-blur-sm text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-white/10">Found</span>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2">Dorm Keys (Room 4B)</h4>
+                    <p class="text-sm text-white/50 mb-6 flex-1">Keys with a red lanyard left on a bench outside gym.</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-white/10">
+                        <span class="text-xs text-white/40 font-medium">3 hours ago</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 text-brand"></i>
+                    </div>
+                </div>
+                
+                <!-- Feed Add New -->
+                <div class="bg-[#111] rounded-3xl p-6 border border-dashed border-white/20 hover:border-brand hover:bg-[#161616] transition-colors cursor-pointer flex flex-col items-center justify-center min-h-[350px]">
+                    <div class="w-16 h-16 rounded-full bg-brand/10 text-brand flex items-center justify-center mb-6">
+                        <i data-lucide="plus" class="w-8 h-8"></i>
+                    </div>
+                    <h4 class="font-bold text-lg mb-2 text-center">Create Report</h4>
+                    <p class="text-sm text-white/50 text-center max-w-[200px]">Lost or found something? Alert the community instantly.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. HOW IT WORKS SECTION -->
+        <section id="howitworks" class="section-container px-16 py-24 bg-[#0a0a0a] border-t border-white/5">
+            <div class="w-full text-center mb-20">
+                <p class="text-brand text-[11px] font-bold uppercase tracking-[0.3em] mb-4">Process</p>
+                <h2 class="text-5xl font-black tracking-tighter">How Recover <span class="text-outline">Works.</span></h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 w-full max-w-5xl mx-auto relative">
+                <!-- Connecting Line -->
+                <div class="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-y-1/2 hidden md:block z-0"></div>
+
+                <!-- Step 1 -->
+                <div class="relative z-10 flex flex-col items-center text-center">
+                    <div class="w-32 h-32 rounded-full bg-[#161616] border border-white/10 shadow-2xl flex items-center justify-center mb-8 relative">
+                        <div class="absolute -top-3 -right-3 w-8 h-8 bg-brand text-black rounded-full flex items-center justify-center font-bold text-sm">1</div>
+                        <i data-lucide="scan-line" class="w-10 h-10 text-brand"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Post & Ping</h3>
+                    <p class="text-white/50 text-sm max-w-[250px]">Upload a photo and details. The system instantly pings users within a 1km radius.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative z-10 flex flex-col items-center text-center">
+                    <div class="w-32 h-32 rounded-full bg-brand border border-brand shadow-2xl flex items-center justify-center mb-8 relative transform md:-translate-y-8">
+                        <div class="absolute -top-3 -right-3 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center font-bold text-sm">2</div>
+                        <i data-lucide="network" class="w-10 h-10 text-black"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">AI Matching</h3>
+                    <p class="text-white/50 text-sm max-w-[250px]">Our algorithm cross-references lost and found feeds to automatically suggest high-probability matches.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative z-10 flex flex-col items-center text-center">
+                    <div class="w-32 h-32 rounded-full bg-[#161616] border border-white/10 shadow-2xl flex items-center justify-center mb-8 relative">
+                        <div class="absolute -top-3 -right-3 w-8 h-8 bg-brand text-black rounded-full flex items-center justify-center font-bold text-sm">3</div>
+                        <i data-lucide="handshake" class="w-10 h-10 text-brand"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Secure Handoff</h3>
+                    <p class="text-white/50 text-sm max-w-[250px]">Connect via private chat and meet at verified, well-lit campus safety hubs for exchange.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="w-full py-12 border-t border-white/5 flex flex-col items-center justify-center text-center z-10 relative bg-[#111]">
+            <div class="w-7 h-7 relative flex items-center justify-center mb-6 opacity-50">
+                <div class="w-full h-full bg-brand rounded-sm absolute"></div>
+                <div class="w-full h-[3px] bg-[#111] absolute transform -rotate-45"></div>
+            </div>
+            <p class="text-white/30 text-xs font-medium uppercase tracking-widest mb-6">Empowering communities to Recover together.</p>
+            <div class="flex items-center gap-6 text-[11px] font-bold uppercase tracking-widest text-white/50">
+                <a href="#" class="hover:text-white transition-colors">Privacy</a>
+                <a href="#" class="hover:text-white transition-colors">Terms</a>
+                <a href="#" class="hover:text-white transition-colors">Contact</a>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        // Active Nav State logic based on scroll
+        const sections = document.querySelectorAll("section");
+        const navLinks = document.querySelectorAll(".nav-pill-container a.nav-pill");
+
+        window.addEventListener("scroll", () => {
+            let current = "";
+            sections.forEach((section) => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute("id");
+                }
+            });
+
+            navLinks.forEach((a) => {
+                a.classList.remove("active");
+                if (a.getAttribute("href").includes(current)) {
+                    a.classList.add("active");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

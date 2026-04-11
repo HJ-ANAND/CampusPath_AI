@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+body {
+  background-color: #f8fafc;
+  background-image: 
+    linear-gradient(to right, rgba(11, 21, 40, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11, 21, 40, 0.12) 1px, transparent 1px);
+  background-size: 60px 60px;
+  color: #0B1528;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    translate: 0 0;
+    rotate: var(--base-rotate, 0deg);
+  }
+  50% {
+    translate: 0 -12px;
+    rotate: calc(var(--base-rotate, 0deg) + 1deg);
+  }
+}
+
+@utility animate-fade-up {
+  animation: fade-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@utility animate-scale-in {
+  animation: scale-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@utility glass-card {
+  @apply bg-white/70 backdrop-blur-xl border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.08)];
+}
+
+@utility glass-dark {
+  @apply bg-[#0B1528]/80 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.2)];
+}
+
+@utility animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@utility watermark-text {
+  @apply absolute font-black text-slate-900/[0.02] leading-none tracking-tighter select-none pointer-events-none;
+  font-size: 15rem;
+}
+
+@utility avatar-stack {
+  @apply flex -space-x-4 overflow-hidden;
+}
+
+@utility avatar-item {
+  @apply inline-block h-10 w-10 rounded-full ring-4 ring-white object-cover;
+}
+
+@utility bg-grid {
+  background-image: 
+    linear-gradient(to right, rgba(11, 21, 40, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11, 21, 40, 0.12) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
