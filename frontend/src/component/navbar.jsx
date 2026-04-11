@@ -8,8 +8,7 @@ function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const linkClass = (path) =>
-    `transition-colors duration-200 ${
-      currentPath === path ? "text-[#5cb9a5]" : "text-slate-600 hover:text-[#5cb9a5]"
+    `transition-colors duration-200 ${currentPath === path ? "text-[#5cb9a5]" : "text-slate-600 hover:text-[#5cb9a5]"
     }`;
 
   return (
@@ -17,7 +16,7 @@ function NavBar() {
       {/* Left Side: Logo */}
       <Link to="/" className="text-[20px] md:text-[22px] font-black text-[#0B1528] tracking-tight flex items-center gap-2 group">
         <span className="w-8 h-8 rounded-lg bg-[#5cb9a5] flex items-center justify-center text-white shadow-lg shadow-[#5cb9a5]/20 group-hover:rotate-12 transition-transform duration-300">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
         </span>
         Lost & Found
       </Link>
