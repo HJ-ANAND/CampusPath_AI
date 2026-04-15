@@ -1,4 +1,4 @@
-const Registration = require("../models/registerSchema");
+const Registration = require("../models/registerModel");
 
 const createRegistration = async (req, res) => {
   try {

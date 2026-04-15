@@ -17,7 +17,7 @@ app.use(express.json());
 app.use("/api", registrationRoutes);
 
 app.get("/", (req, res) => {
-  res.json({ message: "AI Debate Arena Backend chal raha hai!" });
+  res.json({ message: "Lost And Found Backend Working!" });
 });
 
 module.exports = app;
