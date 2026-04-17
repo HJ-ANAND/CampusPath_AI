@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
+import axios from "axios";
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 function AppPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -12,6 +13,10 @@ function AppPage() {
   const [description, setDescription] = useState("");
   const [loadingDesc, setLoadingDesc] = useState(false);
   const [loadingTitle, setLoadingTitle] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [location, setLocation] = useState("");
+  const [incidentTime, setIncidentTime] = useState("");
+  const [extractedDetails, setExtractedDetails] = useState(null);
   const [reports, setReports] = useState(() => {
     const saved = localStorage.getItem('activeReports');
     return saved ? JSON.parse(saved) : [];
@@ -20,6 +25,24 @@ function AppPage() {
   useEffect(() => {
     localStorage.setItem('activeReports', JSON.stringify(reports));
   }, [reports]);
+
+  useEffect(() => {
+    if (user) {
+      const fetchReports = async () => {
+        setIsSyncing(true);
+        try {
+          const response = await axios.get(`${API_BASE_URL}/items/user/${user.id}`);
+          // Merge local and backend reports, prioritizing backend
+          setReports(response.data);
+        } catch (error) {
+          console.error("Failed to fetch reports:", error);
+        } finally {
+          setTimeout(() => setIsSyncing(false), 1000); // Pulse for at least 1s
+        }
+      };
+      fetchReports();
+    }
+  }, [user]);
 
   useEffect(() => {
     const action = searchParams.get("action");
@@ -38,56 +61,36 @@ function AppPage() {
     if (!description.trim()) return;
     setLoadingDesc(true);
     try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: `Rewrite this into a proper, clear, and detailed ${formType} item description. Don't include formatting like markdown: ` + description }] }],
-          }),
-        },
-      );
-      const data = await response.json();
-      if (!response.ok) {
-        console.error("API Error:", data);
-        return;
-      }
-      if (data.candidates?.length > 0)
-        setDescription(data.candidates[0].content.parts[0].text);
-      else alert("Failed to generate description.");
+      const response = await axios.post(`${API_BASE_URL}/items/enhance`, {
+        description: description,
+        type: formType,
+      });
+      const { title: aiTitle, description: aiDesc, metadata } = response.data;
+      setDescription(aiDesc);
+      setTitle(aiTitle);
+      setExtractedDetails(metadata);
     } catch (e) {
-      alert("Error generating description.");
+      console.error("Enhancement error:", e);
+      alert("Error generating enhancement.");
     } finally {
       setLoadingDesc(false);
     }
   };
 
   const generateTitle = async () => {
+    // Since generateDescription now also generates title, we can just reuse the same logic
+    // or let the user regenerate specifically if they want.
     if (!description.trim()) {
       alert("Please write a description first.");
       return;
     }
     setLoadingTitle(true);
     try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: `Generate a short, catchy, and clean title (max 6-8 words) for this ${formType} item description. Provide only the title, no quotes or extra text: ` + description }] }],
-          }),
-        },
-      );
-      const data = await response.json();
-      if (!response.ok) {
-        console.error("API Error:", data);
-        return;
-      }
-      if (data.candidates?.length > 0)
-        setTitle(data.candidates[0].content.parts[0].text);
-      else alert("Failed to generate title.");
+      const response = await axios.post(`${API_BASE_URL}/items/enhance`, {
+        description: description,
+        type: formType,
+      });
+      setTitle(response.data.title);
     } catch (e) {
       alert("Error generating title.");
     } finally {
@@ -111,6 +114,14 @@ function AppPage() {
               Welcome back, <span className="text-[#5cb9a5]">{user?.firstName || 'User'}</span>! Manage your reports or start a new recovery process here.
             </p>
           </div>
+          {isSyncing && (
+            <div className="flex items-center gap-3 bg-[#5cb9a5]/10 text-[#2d5c53] px-6 py-3 rounded-2xl font-bold animate-pulse border border-[#5cb9a5]/20 shadow-lg shadow-[#5cb9a5]/10">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="animate-bounce">
+                <path d="M17.5 19c.7 0 1.3-.2 1.8-.7s.7-1.1.7-1.8c0-.6-.2-1.2-.6-1.7-.4-.5-1-.8-1.7-.9-.1-1.4-.7-2.6-1.7-3.4-1-.8-2.2-1.2-3.5-1.2-1.6 0-3.1.7-4.2 2-1.1 1.3-1.4 3-1 4.5-.8.1-1.5.5-2 1.1-.5.6-.8 1.4-.8 2.2 0 .8.3 1.6.9 2.1.6.6 1.3.9 2.1.9h10z"/>
+              </svg>
+              Cloud Syncing...
+            </div>
+          )}
         </div>
 
         {/* ── Action Cards ── */}
@@ -154,7 +165,7 @@ function AppPage() {
             <h2 className="text-2xl font-black text-[#0B1528] mb-6">Active Reports</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {reports.map((report) => (
-                <div key={report.id} className="bg-white/70 backdrop-blur-sm border border-white/50 p-6 rounded-[2rem] shadow-sm hover:shadow-md transition-all relative overflow-hidden group">
+                <div key={report._id || report.id} className="bg-white/70 backdrop-blur-sm border border-white/50 p-6 rounded-[2rem] shadow-sm hover:shadow-md transition-all relative overflow-hidden group">
                   <div className={`absolute top-0 left-0 w-full h-1.5 ${report.type === 'lost' ? 'bg-[#0B1528]' : 'bg-[#5cb9a5]'}`}></div>
                   <div className="flex justify-between items-start mb-4">
                      <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${report.type === 'lost' ? 'bg-slate-100 text-slate-600' : 'bg-[#5cb9a5]/10 text-[#5cb9a5]'}`}>
@@ -163,7 +174,34 @@ function AppPage() {
                      <span className="text-xs font-semibold text-slate-400">{report.date}</span>
                   </div>
                   <h4 className="text-lg font-black text-[#0B1528] mb-2 leading-tight">{report.title}</h4>
-                  <p className="text-sm text-slate-500 font-medium line-clamp-3">{report.description}</p>
+                  <p className="text-sm text-slate-500 font-medium line-clamp-2 mb-4">{report.description}</p>
+                  
+                  {(report.location || report.incidentTime) && (
+                    <div className="flex flex-col gap-1 pt-3 border-t border-slate-100">
+                      {report.location && (
+                        <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+                          {report.location}
+                        </div>
+                      )}
+                      {report.incidentTime && (
+                        <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                          {report.incidentTime}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {report.isSyncing && (
+                    <div className="absolute bottom-3 right-5 flex items-center gap-1.5">
+                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="3" className="animate-spin-slow">
+                         <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+                       </svg>
+                       <span className="text-[10px] font-black text-[#5cb9a5] uppercase tracking-widest animate-pulse">
+                         Syncing...
+                       </span>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -200,24 +238,67 @@ function AppPage() {
                     {loadingTitle ? "Generating..." : "💡 Generate Smart Title"}
                   </button>
                 </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="flex flex-col">
+                    <label className="text-[14px] font-black text-slate-800 mb-2 uppercase tracking-wider">Location</label>
+                    <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} className="w-full border-2 border-slate-100 bg-slate-50/50 p-4 rounded-2xl focus:ring-4 focus:ring-[#5cb9a5]/10 focus:border-[#5cb9a5] focus:bg-white outline-none transition-all text-slate-800 font-bold" placeholder="Where did it happen?" />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="text-[14px] font-black text-slate-800 mb-2 uppercase tracking-wider">Time</label>
+                    <input type="text" value={incidentTime} onChange={(e) => setIncidentTime(e.target.value)} className="w-full border-2 border-slate-100 bg-slate-50/50 p-4 rounded-2xl focus:ring-4 focus:ring-[#5cb9a5]/10 focus:border-[#5cb9a5] focus:bg-white outline-none transition-all text-slate-800 font-bold" placeholder="When (e.g. yesterday 2pm)" />
+                  </div>
+                </div>
+
                 <div className="pt-6 mt-4">
-                  <button onClick={() => {
-                    if (!title.trim() || !description.trim()) {
-                      alert("Please provide both a description and a title.");
+                  <button onClick={async () => {
+                    if (!title.trim() || !description.trim() || !location.trim() || !incidentTime.trim()) {
+                      alert("Please fill in all fields.");
                       return;
                     }
-                    const newReport = {
+                    
+                    const optimisticReport = {
+                      _id: Date.now().toString(), // Temp ID
                       id: Date.now(),
                       type: formType,
                       title: title,
                       description: description,
-                      date: new Date().toLocaleDateString()
+                      location: location,
+                      incidentTime: incidentTime,
+                      status: "active",
+                      date: new Date().toLocaleDateString(),
+                      isSyncing: true
                     };
-                    setReports([newReport, ...reports]);
-                    alert("Report submitted successfully!");
-                    setFormType(null); // Close the modal
-                    setTitle(""); // Clear fields
-                    setDescription("");
+
+                    // Optimistic update
+                    setReports([optimisticReport, ...reports]);
+                    setFormType(null);
+                    setIsSyncing(true);
+
+                    try {
+                      const response = await axios.post(`${API_BASE_URL}/items`, {
+                        userId: user.id,
+                        type: formType,
+                        title,
+                        description,
+                        location,
+                        incidentTime,
+                        extractedDetails
+                      });
+
+                      // Replace optimistic entry with real DB data
+                      setReports(prev => prev.map(r => r._id === optimisticReport._id ? response.data : r));
+                    } catch (error) {
+                      console.error("Submission failed:", error);
+                      alert("Failed to sync with cloud. Changes saved locally.");
+                    } finally {
+                      setTimeout(() => setIsSyncing(false), 2000); // Keep sync visible for 2s
+                      setTitle("");
+                      setDescription("");
+                      setLocation("");
+                      setIncidentTime("");
+                      setExtractedDetails(null);
+                    }
                   }} className="w-full bg-[#5cb9a5] text-white px-6 py-4 rounded-2xl font-black shadow-[0_15px_30px_rgba(92,185,165,0.25)] hover:bg-[#4ea693] hover:-translate-y-1 transition-all text-lg">
                     Submit Final Report
                   </button>
