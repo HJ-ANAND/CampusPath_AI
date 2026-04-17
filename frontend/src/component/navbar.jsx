@@ -8,8 +8,43 @@ function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const linkClass = (path) =>
-    `transition-colors duration-200 ${currentPath === path ? "text-[#5cb9a5]" : "text-slate-600 hover:text-[#5cb9a5]"
+    `transition-colors duration-200 ${
+      currentPath === path ? "text-[#5cb9a5]" : "text-slate-600 hover:text-[#5cb9a5]"
     }`;
+
+  // Custom Dashboard Icon for the Clerk Menu
+  const DashboardIcon = () => (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="16" 
+      height="16" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+    >
+      <rect x="3" y="3" width="7" height="9"></rect>
+      <rect x="14" y="3" width="7" height="5"></rect>
+      <rect x="14" y="12" width="7" height="9"></rect>
+      <rect x="3" y="16" width="7" height="5"></rect>
+    </svg>
+  );
+
+  // Reusable appearance prop to maintain a premium glassmorphism vibe
+  const userButtonAppearance = {
+    elements: {
+      userButtonPopoverCard: "bg-white/90 backdrop-blur-2xl border border-white/50 shadow-[0_12px_48px_rgba(0,0,0,0.12)] rounded-2xl",
+      userButtonPopoverActionButton: "hover:bg-slate-50/80 text-slate-700 transition-colors duration-200",
+      userButtonPopoverActionButtonText: "font-semibold",
+      userButtonPopoverActionButtonIconBox: "text-slate-500",
+      userButtonPopoverFooter: "border-t border-slate-100/50",
+      userPreviewMainIdentifier: "font-bold text-[#0B1528]",
+      userPreviewSecondaryIdentifier: "text-slate-500",
+      avatarBox: "shadow-md shadow-[#5cb9a5]/10 border border-slate-100",
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-1/2 -translate-x-1/2 w-[92%] max-w-7xl mt-5 px-6 md:px-12 py-4 bg-white/70 backdrop-blur-xl border border-white/40 rounded-[2.5rem] shadow-[0_8px_32px_rgba(0,0,0,0.05)] z-[100] flex justify-between items-center transition-all duration-300">
@@ -51,7 +86,17 @@ function NavBar() {
             </SignInButton>
           </SignedOut>
           <SignedIn>
-            <UserButton showName={true} />
+            <UserButton showName={true} appearance={userButtonAppearance}>
+              <UserButton.MenuItems>
+                <UserButton.Link
+                  label="Dashboard"
+                  labelIcon={<DashboardIcon />}
+                  href="/app"
+                />
+                <UserButton.Action label="manageAccount" />
+                <UserButton.Action label="signOut" />
+              </UserButton.MenuItems>
+            </UserButton>
           </SignedIn>
         </div>
 
@@ -84,7 +129,17 @@ function NavBar() {
             </SignedOut>
             <SignedIn>
               <div className="flex items-center gap-3">
-                <UserButton showName={true} />
+                <UserButton showName={true} appearance={userButtonAppearance}>
+                   <UserButton.MenuItems>
+                    <UserButton.Link
+                      label="Dashboard"
+                      labelIcon={<DashboardIcon />}
+                      href="/app"
+                    />
+                    <UserButton.Action label="manageAccount" />
+                    <UserButton.Action label="signOut" />
+                  </UserButton.MenuItems>
+                </UserButton>
               </div>
             </SignedIn>
           </div>
