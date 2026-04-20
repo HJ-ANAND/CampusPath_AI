@@ -1,7 +1,9 @@
 const ItemReport = require("../models/itemModel");
 const { generateEnhancedContent } = require("../utils/aiService");
+const { findMatches, syncUserMatches } = require("../utils/matchingService");
 
 // @desc    Enhance item description using AI
+// ...
 // @route   POST /api/items/enhance
 // @access  Public (protected by Clerk on frontend)
 const enhanceItem = async (req, res) => {
@@ -39,6 +41,10 @@ const createItem = async (req, res) => {
       incidentTime,
       extractedDetails,
     });
+
+    // Run matching system in background (no await to avoid slowing down response)
+    findMatches(newReport).catch((err) => console.error("Matching Background Error:", err));
+
     res.status(201).json(newReport);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -59,8 +65,24 @@ const getUserItems = async (req, res) => {
   }
 };
 
+// @desc    Deep sync matches for all user's items
+// @route   POST /api/items/sync/:userId
+// @access  Public
+const syncItems = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const success = await syncUserMatches(userId);
+    if (!success) throw new Error("Sync failed internally");
+    res.json({ message: "Matching system sync completed successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   enhanceItem,
   createItem,
   getUserItems,
+  syncItems,
 };

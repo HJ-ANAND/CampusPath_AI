@@ -17,6 +17,9 @@ function AppPage() {
   const [location, setLocation] = useState("");
   const [incidentTime, setIncidentTime] = useState("");
   const [extractedDetails, setExtractedDetails] = useState(null);
+  const [matches, setMatches] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [reports, setReports] = useState(() => {
     const saved = localStorage.getItem('activeReports');
     return saved ? JSON.parse(saved) : [];
@@ -28,21 +31,61 @@ function AppPage() {
 
   useEffect(() => {
     if (user) {
-      const fetchReports = async () => {
+      const fetchData = async () => {
         setIsSyncing(true);
         try {
-          const response = await axios.get(`${API_BASE_URL}/items/user/${user.id}`);
-          // Merge local and backend reports, prioritizing backend
-          setReports(response.data);
+          // Trigger Deep Match Sync
+          await axios.post(`${API_BASE_URL}/items/sync/${user.id}`);
+
+          // Fetch Reports
+          const repRes = await axios.get(`${API_BASE_URL}/items/user/${user.id}`);
+          setReports(repRes.data);
+
+          // Fetch Matches
+          const matchRes = await axios.get(`${API_BASE_URL}/matches/user/${user.id}`);
+          setMatches(matchRes.data);
+
+          // Fetch Notifications
+          const notifRes = await axios.get(`${API_BASE_URL}/notifications/${user.id}`);
+          setNotifications(notifRes.data);
         } catch (error) {
-          console.error("Failed to fetch reports:", error);
+          console.error("Failed to fetch data:", error);
         } finally {
-          setTimeout(() => setIsSyncing(false), 1000); // Pulse for at least 1s
+          setTimeout(() => setIsSyncing(false), 1000);
         }
       };
-      fetchReports();
+      fetchData();
     }
   }, [user]);
+
+  const handleAcceptMatch = async (matchId) => {
+    try {
+      await axios.patch(`${API_BASE_URL}/matches/${matchId}`, { status: "accepted" });
+      // Refresh matches
+      const response = await axios.get(`${API_BASE_URL}/matches/user/${user.id}`);
+      setMatches(response.data);
+    } catch (e) {
+      console.error("Failed to accept match:", e);
+    }
+  };
+
+  const handleRejectMatch = async (matchId) => {
+    try {
+      await axios.patch(`${API_BASE_URL}/matches/${matchId}`, { status: "rejected" });
+      setMatches(matches.filter(m => m._id !== matchId));
+    } catch (e) {
+      console.error("Failed to reject match:", e);
+    }
+  };
+
+  const handleMarkRead = async (notifId) => {
+    try {
+      await axios.patch(`${API_BASE_URL}/notifications/${notifId}/read`);
+      setNotifications(notifications.map(n => n._id === notifId ? { ...n, isRead: true } : n));
+    } catch (e) {
+      console.error("Failed to mark read:", e);
+    }
+  };
 
   useEffect(() => {
     const action = searchParams.get("action");
@@ -114,14 +157,66 @@ function AppPage() {
               Welcome back, <span className="text-[#5cb9a5]">{user?.firstName || 'User'}</span>! Manage your reports or start a new recovery process here.
             </p>
           </div>
-          {isSyncing && (
-            <div className="flex items-center gap-3 bg-[#5cb9a5]/10 text-[#2d5c53] px-6 py-3 rounded-2xl font-bold animate-pulse border border-[#5cb9a5]/20 shadow-lg shadow-[#5cb9a5]/10">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="animate-bounce">
-                <path d="M17.5 19c.7 0 1.3-.2 1.8-.7s.7-1.1.7-1.8c0-.6-.2-1.2-.6-1.7-.4-.5-1-.8-1.7-.9-.1-1.4-.7-2.6-1.7-3.4-1-.8-2.2-1.2-3.5-1.2-1.6 0-3.1.7-4.2 2-1.1 1.3-1.4 3-1 4.5-.8.1-1.5.5-2 1.1-.5.6-.8 1.4-.8 2.2 0 .8.3 1.6.9 2.1.6.6 1.3.9 2.1.9h10z"/>
-              </svg>
-              Cloud Syncing...
+          {/* Notifications & Sync */}
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all border ${
+                  notifications.some(n => !n.isRead)
+                    ? "bg-[#5cb9a5]/10 border-[#5cb9a5]/20 text-[#5cb9a5]"
+                    : "bg-white/60 border-white/50 text-slate-400"
+                }`}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                {notifications.some(n => !n.isRead) && (
+                  <span className="absolute top-3 right-3 w-3 h-3 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
+                )}
+              </button>
+
+              {/* Notification Dropdown */}
+              {showNotifications && (
+                <div className="absolute right-0 mt-4 w-80 md:w-96 bg-white/95 backdrop-blur-md rounded-[2rem] shadow-2xl border border-slate-100 z-[150] overflow-hidden animate-in slide-in-from-top-4 duration-300">
+                  <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+                    <h3 className="text-lg font-black text-[#0B1528]">Notifications</h3>
+                    <span className="text-xs font-bold text-[#5cb9a5] bg-[#5cb9a5]/10 px-2 py-1 rounded-lg">
+                      {notifications.filter(n => !n.isRead).length} New
+                    </span>
+                  </div>
+                  <div className="max-h-[400px] overflow-y-auto">
+                    {notifications.length === 0 ? (
+                      <div className="p-10 text-center text-slate-400 font-bold">No notifications yet.</div>
+                    ) : (
+                      notifications.map(notif => (
+                        <div
+                          key={notif._id}
+                          onClick={() => handleMarkRead(notif._id)}
+                          className={`p-5 border-b border-slate-50 last:border-0 cursor-pointer transition-colors ${
+                            notif.isRead ? "opacity-60" : "bg-[#5cb9a5]/5"
+                          }`}
+                        >
+                          <p className="text-sm font-bold text-slate-700 leading-snug">{notif.message}</p>
+                          <span className="text-[10px] font-black text-slate-400 uppercase mt-2 block tracking-widest">{new Date(notif.createdAt).toLocaleString()}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+
+            {isSyncing && (
+              <div className="flex items-center gap-3 bg-[#5cb9a5]/10 text-[#2d5c53] px-6 py-3 rounded-2xl font-bold animate-pulse border border-[#5cb9a5]/20 shadow-lg shadow-[#5cb9a5]/10">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="animate-bounce">
+                  <path d="M17.5 19c.7 0 1.3-.2 1.8-.7s.7-1.1.7-1.8c0-.6-.2-1.2-.6-1.7-.4-.5-1-.8-1.7-.9-.1-1.4-.7-2.6-1.7-3.4-1-.8-2.2-1.2-3.5-1.2-1.6 0-3.1.7-4.2 2-1.1 1.3-1.4 3-1 4.5-.8.1-1.5.5-2 1.1-.5.6-.8 1.4-.8 2.2 0 .8.3 1.6.9 2.1.6.6 1.3.9 2.1.9h10z"/>
+                </svg>
+                Cloud Syncing...
+              </div>
+            )}
+          </div>
         </div>
 
         {/* ── Action Cards ── */}
@@ -150,6 +245,73 @@ function AppPage() {
           </div>
 
         </div>
+
+        {/* ── Potential Matches ── */}
+        {matches.length > 0 && (
+          <div className="mb-20 animate-fade-up">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-2 h-8 bg-[#5cb9a5] rounded-full"></div>
+              <h2 className="text-2xl md:text-3xl font-black text-[#0B1528]">Potential Matches Detected</h2>
+              <span className="bg-[#5cb9a5]/10 text-[#5cb9a5] px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest animate-pulse">AI Powered</span>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {matches.map((match) => {
+                const isLostOwner = match.lostItemId.userId === user.id;
+                const otherItem = isLostOwner ? match.foundItemId : match.lostItemId;
+                
+                return (
+                  <div key={match._id} className="group relative bg-white/80 backdrop-blur-md border-2 border-[#5cb9a5]/20 p-8 rounded-[2.5rem] shadow-xl shadow-[#5cb9a5]/5 hover:border-[#5cb9a5] transition-all duration-500">
+                    <div className="absolute -top-4 -right-4 w-16 h-16 bg-[#5cb9a5] rounded-full flex flex-col items-center justify-center text-white shadow-lg shadow-[#5cb9a5]/30">
+                       <span className="text-xs font-black leading-none">{Math.round(match.score * 100)}%</span>
+                       <span className="text-[8px] font-bold uppercase tracking-tighter">Match</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 mb-6">
+                       <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400">
+                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+                       </div>
+                       <div className="flex flex-col">
+                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{otherItem.type} item Found</span>
+                         <span className="text-sm font-bold text-slate-700">{otherItem.location}</span>
+                       </div>
+                    </div>
+
+                    <h4 className="text-lg font-black text-[#0B1528] mb-3 leading-tight line-clamp-1">{otherItem.title}</h4>
+                    <p className="text-sm text-slate-500 font-medium mb-8 line-clamp-2 leading-relaxed">
+                      {otherItem.description}
+                    </p>
+
+                    <div className="flex items-center gap-3">
+                      {isLostOwner && match.status === "pending" ? (
+                        <>
+                          <button 
+                            onClick={() => handleAcceptMatch(match._id)}
+                            className="flex-1 bg-[#5cb9a5] text-white py-3 rounded-xl font-black text-sm shadow-lg shadow-[#5cb9a5]/20 hover:-translate-y-1 transition-all"
+                          >
+                            This is mine!
+                          </button>
+                          <button 
+                            onClick={() => handleRejectMatch(match._id)}
+                            className="px-4 py-3 rounded-xl border-2 border-slate-100 text-slate-400 hover:bg-slate-50 transition-all"
+                          >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                          </button>
+                        </>
+                      ) : (
+                        <div className={`w-full py-3 rounded-xl font-black text-sm text-center ${
+                          match.status === "accepted" ? "bg-green-50 text-green-600 border border-green-100" : "bg-slate-50 text-slate-400"
+                        }`}>
+                          {match.status === "accepted" ? "🎉 MATCH CONFIRMED" : "WAITING FOR OWNER"}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* ── Activity / Reports ── */}
         {reports.length === 0 ? (
