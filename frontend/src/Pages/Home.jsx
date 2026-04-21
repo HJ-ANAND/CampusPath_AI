@@ -60,7 +60,7 @@ function App() {
           HERO SECTION
       ══════════════════════════════════════════════════════ */}
       <main className="relative w-full min-h-screen flex flex-col items-center justify-center pt-36 pb-32 px-6 overflow-hidden">
-        
+
         {/* Large Faded Background Typography */}
         <span className="absolute top-[20%] left-[-2%] text-[clamp(6rem,15vw,12rem)] font-black text-outline pointer-events-none select-none -rotate-12 opacity-60">LOST</span>
         <span className="absolute top-[60%] left-[15%] text-[clamp(4rem,10vw,8rem)] font-black text-outline-teal pointer-events-none select-none opacity-50">PHONES</span>
@@ -81,7 +81,7 @@ function App() {
         {/* ── HEADLINE & SUBTEXT ── */}
         <div className="relative z-20 text-center max-w-4xl animate-fade-up" style={{ animationDelay: '0.1s' }}>
           <h1 className="font-black text-[#0B1528] leading-[1.1] mb-6" style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}>
-            Recover Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5cb9a5] to-[#4ea693]">Lost Items</span> <br className="hidden md:block"/>
+            Recover Your <span className="text-transparent bg-clip-text bg-linear-to-r from-[#5cb9a5] to-[#4ea693]">Lost Items</span> <br className="hidden md:block"/>
             with AI-Powered <span className="text-[#0B1528]">Matching</span>
           </h1>
           <p className="text-[1.1rem] md:text-[1.2rem] text-slate-500 max-w-3xl mx-auto mb-10 leading-relaxed font-semibold">
@@ -96,11 +96,11 @@ function App() {
 
           {/* ── CTAs ── */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 w-full">
-            <button onClick={() => handleAction('lost')} className="flex items-center justify-center gap-2 bg-[#0B1528] text-white px-8 py-4 rounded-xl font-black text-[16px] shadow-xl shadow-[#0B1528]/20 hover:-translate-y-1 hover:bg-[#152342] transition-all w-full sm:w-auto min-w-[200px]">
+            <button onClick={() => handleAction('lost')} className="flex items-center justify-center gap-2 bg-[#0B1528] text-white px-8 py-4 rounded-xl font-black text-[16px] shadow-xl shadow-[#0B1528]/20 hover:-translate-y-1 hover:bg-[#152342] transition-all w-full sm:w-auto min-w-50">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
               Report Lost Item
             </button>
-            <button onClick={() => handleAction('found')} className="bg-[#5cb9a5] text-white px-8 py-4 rounded-xl font-black text-[16px] shadow-xl shadow-[#5cb9a5]/25 hover:-translate-y-1 hover:bg-[#4ea693] transition-all w-full sm:w-auto min-w-[200px]">
+            <button onClick={() => handleAction('found')} className="bg-[#5cb9a5] text-white px-8 py-4 rounded-xl font-black text-[16px] shadow-xl shadow-[#5cb9a5]/25 hover:-translate-y-1 hover:bg-[#4ea693] transition-all w-full sm:w-auto min-w-50">
               Submit Found Item
             </button>
           </div>
@@ -121,7 +121,7 @@ function App() {
         {/* ── LEFT & RIGHT STATIC GRAPHICS ── */}
         {/* Left Graphic (Lost Wallet) */}
         <div className="absolute left-[2%] top-[25%] hidden xl:flex flex-col items-center animate-fade-up" style={{ animationDelay: '0.2s' }}>
-          <div className="w-[320px] h-[320px] bg-white rounded-full flex items-center justify-center overflow-hidden border-[6px] border-white shadow-[0_20px_50px_rgba(11,21,40,0.08)]">
+          <div className="w-[320px] h-80 bg-white rounded-full flex items-center justify-center overflow-hidden border-[6px] border-white shadow-[0_20px_50px_rgba(11,21,40,0.08)]">
             <img src="https://images.unsplash.com/photo-1627123424574-724758594e93?w=400&h=400&fit=crop" alt="Lost Wallet" className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" />
           </div>
           <div className="bg-white px-5 py-2.5 rounded-full border border-slate-100 shadow-lg flex items-center gap-2.5 -mt-6 z-10 text-[13px] font-black text-[#0B1528]">
@@ -132,10 +132,10 @@ function App() {
 
         {/* Right Graphic (Lost Phone) */}
         <div className="absolute right-[2%] top-[40%] hidden xl:flex flex-col items-center animate-fade-up" style={{ animationDelay: '0.3s' }}>
-          <div className="w-[320px] h-[320px] bg-white rounded-full flex items-center justify-center overflow-hidden border-[6px] border-white shadow-[0_20px_50px_rgba(11,21,40,0.08)]">
+          <div className="w-[320px] h-80 bg-white rounded-full flex items-center justify-center overflow-hidden border-[6px] border-white shadow-[0_20px_50px_rgba(11,21,40,0.08)]">
             <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop" alt="Lost Smartphone" className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" />
           </div>
-          <div className="bg-white px-6 py-4 rounded-[2rem] border border-slate-100 shadow-xl flex flex-col items-center gap-1 absolute -right-6 top-1/2 z-10 text-center">
+          <div className="bg-white px-6 py-4 rounded-4xl border border-slate-100 shadow-xl flex flex-col items-center gap-1 absolute -right-6 top-1/2 z-10 text-center">
              <span className="text-[12px] font-black text-slate-500">Get</span>
              <span className="text-2xl font-black text-[#5cb9a5]">98%</span>
              <span className="text-[12px] font-black text-[#5cb9a5]">Match Rate</span>
@@ -161,7 +161,7 @@ function App() {
       ══════════════════════════════════════════════════════ */}
       <section className="px-6 xl:px-12 max-w-7xl mx-auto w-full relative z-10 my-20 animate-fade-up bg-[#0B1528] rounded-[3rem] py-16" style={{ animationDelay: '0.4s' }}>
         <div className="grid md:grid-cols-3 gap-6 xl:gap-8 px-8">
-          <div className="glass-dark p-10 rounded-[2rem] flex flex-col items-start gap-8 hover:-translate-y-3 transition-all duration-500 group">
+          <div className="glass-dark p-10 rounded-4xl flex flex-col items-start gap-8 hover:-translate-y-3 transition-all duration-500 group">
             <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 group-hover:bg-[#5cb9a5]/20 group-hover:border-[#5cb9a5]/30 transition-all">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
             </div>
@@ -173,7 +173,7 @@ function App() {
             </div>
           </div>
 
-          <div className="glass-dark p-10 rounded-[2rem] flex flex-col items-start gap-8 hover:-translate-y-3 transition-all duration-500 group">
+          <div className="glass-dark p-10 rounded-4xl flex flex-col items-start gap-8 hover:-translate-y-3 transition-all duration-500 group">
             <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 group-hover:bg-[#5cb9a5]/20 group-hover:border-[#5cb9a5]/30 transition-all">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="2.5"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" /></svg>
             </div>
@@ -185,7 +185,7 @@ function App() {
             </div>
           </div>
 
-          <div className="glass-dark p-10 rounded-[2rem] flex flex-col items-start gap-8 hover:-translate-y-3 transition-all duration-500 group">
+          <div className="glass-dark p-10 rounded-4xl flex flex-col items-start gap-8 hover:-translate-y-3 transition-all duration-500 group">
             <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 group-hover:bg-[#5cb9a5]/20 group-hover:border-[#5cb9a5]/30 transition-all">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
             </div>
@@ -255,14 +255,14 @@ function App() {
       ══════════════════════════════════════════════════════ */}
       <section className="px-6 xl:px-12 max-w-7xl mx-auto w-full mb-32 relative z-10">
         <div className="bg-[#0B1528] rounded-[4rem] px-8 md:px-20 py-24 flex flex-col lg:flex-row items-center justify-between gap-12 shadow-[0_40px_100px_rgba(11,21,40,0.3)] overflow-hidden relative group">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#1a2b4b] to-[#0B1528] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-          <div className="absolute -right-24 -top-24 w-[500px] h-[500px] rounded-full bg-[#5cb9a5]/5 blur-[100px] pointer-events-none"></div>
-          <div className="absolute -left-24 -bottom-24 w-[400px] h-[400px] rounded-full bg-[#5cb9a5]/5 blur-[80px] pointer-events-none"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-[#1a2b4b] to-[#0B1528] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+          <div className="absolute -right-24 -top-24 w-125 h-125 rounded-full bg-[#5cb9a5]/5 blur-[100px] pointer-events-none"></div>
+          <div className="absolute -left-24 -bottom-24 w-100 h-100 rounded-full bg-[#5cb9a5]/5 blur-[80px] pointer-events-none"></div>
 
           <div className="relative z-10 max-w-2xl text-center lg:text-left">
             <h3 className="text-4xl md:text-[3.5rem] font-black text-white tracking-tighter mb-8 leading-[1.1]">
               Ready to find <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5cb9a5] to-[#80dfca]">What Matters?</span>
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-[#5cb9a5] to-[#80dfca]">What Matters?</span>
             </h3>
             <p className="text-slate-400 text-xl font-semibold leading-relaxed max-w-lg mx-auto lg:mx-0">
               Join the world's most trusted community-driven recovery network. Join for free, stay for peace of mind.

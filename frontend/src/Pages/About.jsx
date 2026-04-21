@@ -45,9 +45,9 @@ function About() {
             <div className="w-2.5 h-2.5 bg-[#5cb9a5] rounded-full pulse-dot"></div>
             <span className="text-[12px] md:text-[13px] font-black text-slate-500 tracking-widest uppercase">Community-Driven Platform</span>
           </div>
-          
+
           <h1 className="font-black text-[#0B1528] leading-[1.05] mb-10" style={{ fontSize: "clamp(2.5rem, 8vw, 5rem)" }}>
-            Empowering <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5cb9a5] to-[#4ea693]">Connections</span> <br/>
+            Empowering <span className="text-transparent bg-clip-text bg-linear-to-r from-[#5cb9a5] to-[#4ea693]">Connections</span> <br/>
             through <span className="text-[#0B1528]">Compassion</span>
           </h1>
 
@@ -91,7 +91,7 @@ function About() {
             {/* Solution Card */}
             <div className="h-full bg-[#0B1528] p-8 md:p-12 rounded-[2.5rem] shadow-[0_32px_80px_-20px_rgba(11,21,40,0.4)] flex flex-col gap-8 animate-fade-up border border-white/5 relative overflow-hidden group" style={{ animationDelay: '0.2s' }}>
               <div className="absolute -right-12 -top-12 w-64 h-64 bg-[#5cb9a5]/10 rounded-full blur-3xl group-hover:scale-120 transition-transform duration-1000"></div>
-              
+
               <div className="flex items-center gap-5 relative z-10">
                 <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 group-hover:border-[#5cb9a5]/30 transition-all">
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="2.5"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" /></svg>
@@ -118,21 +118,21 @@ function About() {
             <p className="text-lg md:text-xl text-slate-500 font-extrabold max-w-xl mx-auto">Scale of trust built by our members over the last year.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 lg:gap-10">
-            <div className="h-full bg-white/80 backdrop-blur-xl p-10 md:p-14 rounded-[3rem] border border-white shadow-xl shadow-slate-200/40 flex flex-col items-center justify-center text-center hover:-translate-y-2 transition-all duration-500 min-h-[320px]">
+            <div className="h-full bg-white/80 backdrop-blur-xl p-10 md:p-14 rounded-[3rem] border border-white shadow-xl shadow-slate-200/40 flex flex-col items-center justify-center text-center hover:-translate-y-2 transition-all duration-500 min-h-80">
               <div className="w-20 h-20 bg-[#5cb9a5]/10 rounded-3xl flex items-center justify-center mb-8 shrink-0 shadow-inner">
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="2.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2" /><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" /></svg>
               </div>
               <h4 className="text-5xl md:text-6xl font-black text-[#0B1528] mb-4 tracking-tight">500<span className="text-[#5cb9a5]">k</span></h4>
               <p className="text-slate-500 font-black text-sm uppercase tracking-[0.2em]">Items Reclaimed</p>
             </div>
-            <div className="h-full bg-white/80 backdrop-blur-xl p-10 md:p-14 rounded-[3rem] border border-white shadow-xl shadow-slate-200/40 flex flex-col items-center justify-center text-center hover:-translate-y-2 transition-all duration-500 min-h-[320px]">
+            <div className="h-full bg-white/80 backdrop-blur-xl p-10 md:p-14 rounded-[3rem] border border-white shadow-xl shadow-slate-200/40 flex flex-col items-center justify-center text-center hover:-translate-y-2 transition-all duration-500 min-h-80">
               <div className="w-20 h-20 bg-[#5cb9a5]/10 rounded-3xl flex items-center justify-center mb-8 shrink-0 shadow-inner">
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></svg>
               </div>
               <h4 className="text-5xl md:text-6xl font-black text-[#0B1528] mb-4 tracking-tight">10<span className="text-[#5cb9a5]">k</span></h4>
               <p className="text-slate-500 font-black text-sm uppercase tracking-[0.2em]">Active Neighbors</p>
             </div>
-            <div className="h-full bg-white/80 backdrop-blur-xl p-10 md:p-14 rounded-[3rem] border border-white shadow-xl shadow-slate-200/40 flex flex-col items-center justify-center text-center hover:-translate-y-2 transition-all duration-500 min-h-[320px]">
+            <div className="h-full bg-white/80 backdrop-blur-xl p-10 md:p-14 rounded-[3rem] border border-white shadow-xl shadow-slate-200/40 flex flex-col items-center justify-center text-center hover:-translate-y-2 transition-all duration-500 min-h-80">
               <div className="w-20 h-20 bg-[#5cb9a5]/10 rounded-3xl flex items-center justify-center mb-8 shrink-0 shadow-inner">
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#5cb9a5" strokeWidth="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><polyline points="9 12 11 14 15 10" /></svg>
               </div>
@@ -150,20 +150,20 @@ function About() {
             <h3 className="text-[3rem] md:text-[4.5rem] font-black text-[#0B1528] tracking-tighter leading-none mb-6">Built for the <br className="md:hidden" /><span className="text-[#5cb9a5]">Community</span></h3>
             <p className="text-xl md:text-2xl text-slate-500 font-black max-w-2xl mx-auto">Wherever life happens, we ensure nothing stays lost for long.</p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-12 lg:gap-16 items-start">
             {/* CARD 1: COLLEGE CAMPUS */}
             <div className="flex flex-col items-center group text-center">
-              <div className="w-60 h-60 min-w-[240px] min-h-[240px] max-w-[240px] max-h-[240px] bg-white rounded-full flex items-center justify-center p-2 border-[8px] border-white shadow-xl group-hover:scale-105 transition-transform duration-700 overflow-hidden mb-8 shrink-0 aspect-square">
+              <div className="w-60 h-60 min-w-60 min-h-60 max-w-60 max-h-60 bg-white rounded-full flex items-center justify-center p-2 border-8 border-white shadow-xl group-hover:scale-105 transition-transform duration-700 overflow-hidden mb-8 shrink-0 aspect-square">
                 <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=500&q=80" alt="Campus" className="w-full h-full object-cover rounded-full aspect-square" />
               </div>
               <h4 className="text-2xl lg:text-3xl font-black text-[#0B1528] mb-4">College Campus</h4>
               <p className="text-slate-500 font-bold px-4 leading-relaxed">The high-density heartbeat of our network. Returning IDs, books, and laptops daily.</p>
             </div>
-            
+
             {/* CARD 2: RESIDENTIAL SOCIETIES */}
             <div className="flex flex-col items-center group text-center">
-              <div className="w-60 h-60 min-w-[240px] min-h-[240px] max-w-[240px] max-h-[240px] bg-[#0B1528] rounded-full flex items-center justify-center p-2 border-[8px] border-white shadow-xl group-hover:scale-105 transition-transform duration-700 overflow-hidden mb-8 shrink-0 aspect-square relative">
+              <div className="w-60 h-60 min-w-60 min-h-60 max-w-60 max-h-60 bg-[#0B1528] rounded-full flex items-center justify-center p-2 border-8 border-white shadow-xl group-hover:scale-105 transition-transform duration-700 overflow-hidden mb-8 shrink-0 aspect-square relative">
                 <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=500&q=80" alt="Societies" className="w-full h-full object-cover rounded-full aspect-square opacity-40" />
                 <div className="absolute inset-0 flex items-center justify-center text-[4rem]">🏢</div>
               </div>
@@ -173,7 +173,7 @@ function About() {
 
             {/* CARD 3: METRO STATIONS */}
             <div className="flex flex-col items-center group text-center">
-              <div className="w-60 h-60 min-w-[240px] min-h-[240px] max-w-[240px] max-h-[240px] bg-white rounded-full flex items-center justify-center p-2 border-[8px] border-white shadow-xl group-hover:scale-105 transition-transform duration-700 overflow-hidden mb-8 shrink-0 aspect-square">
+              <div className="w-60 h-60 min-w-60 min-h-60 max-w-60 max-h-60 bg-white rounded-full flex items-center justify-center p-2 border-8 border-white shadow-xl group-hover:scale-105 transition-transform duration-700 overflow-hidden mb-8 shrink-0 aspect-square">
                 <img src="https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=500&q=80" alt="Transit" className="w-full h-full object-cover rounded-full aspect-square" />
               </div>
               <h4 className="text-2xl lg:text-3xl font-black text-[#0B1528] mb-4">Metro Stations</h4>
@@ -187,14 +187,14 @@ function About() {
         ══════════════════════════════════════════════════════ */}
         <section className="mt-40 px-6 xl:px-12 max-w-7xl mx-auto w-full mb-20 relative z-10">
           <div className="bg-[#0B1528] rounded-[3rem] md:rounded-[4rem] px-8 md:px-20 py-24 flex flex-col lg:flex-row items-center justify-between gap-16 shadow-[0_40px_100px_-20px_rgba(11,21,40,0.5)] overflow-hidden relative group">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#1a2b4b] to-[#0B1528] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-            <div className="absolute -right-24 -top-24 w-[500px] h-[500px] rounded-full bg-[#5cb9a5]/10 blur-[100px] pointer-events-none"></div>
-            <div className="absolute -left-24 -bottom-24 w-[400px] h-[400px] rounded-full bg-[#5cb9a5]/10 blur-[80px] pointer-events-none"></div>
+            <div className="absolute inset-0 bg-linear-to-br from-[#1a2b4b] to-[#0B1528] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+            <div className="absolute -right-24 -top-24 w-125 h-125 rounded-full bg-[#5cb9a5]/10 blur-[100px] pointer-events-none"></div>
+            <div className="absolute -left-24 -bottom-24 w-100 h-100 rounded-full bg-[#5cb9a5]/10 blur-[80px] pointer-events-none"></div>
 
             <div className="relative z-10 max-w-2xl text-center lg:text-left">
               <h3 className="text-[2.8rem] md:text-[4rem] font-black text-white tracking-tighter mb-8 leading-[1.05]">
                 Find Your <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5cb9a5] to-[#80dfca]">Peace of Mind.</span>
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-[#5cb9a5] to-[#80dfca]">Peace of Mind.</span>
               </h3>
               <p className="text-slate-400 text-xl md:text-2xl font-semibold leading-relaxed mb-6">
                 Join thousands of community members who have already reclaimed what's theirs. All for free.

@@ -14,15 +14,15 @@ function NavBar() {
 
   // Custom Dashboard Icon for the Clerk Menu
   const DashboardIcon = () => (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width="16" 
-      height="16" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
       strokeLinejoin="round"
     >
       <rect x="3" y="3" width="7" height="9"></rect>
@@ -47,7 +47,7 @@ function NavBar() {
   };
 
   return (
-    <nav className="fixed top-0 left-1/2 -translate-x-1/2 w-[92%] max-w-7xl mt-5 px-6 md:px-12 py-4 bg-white/70 backdrop-blur-xl border border-white/40 rounded-[2.5rem] shadow-[0_8px_32px_rgba(0,0,0,0.05)] z-[100] flex justify-between items-center transition-all duration-300">
+    <nav className="fixed top-0 left-1/2 -translate-x-1/2 w-[92%] max-w-7xl mt-5 px-6 md:px-12 py-4 bg-white/70 backdrop-blur-xl border border-white/40 rounded-[2.5rem] shadow-[0_8px_32px_rgba(0,0,0,0.05)] z-100 flex justify-between items-center transition-all duration-300">
       {/* Left Side: Logo */}
       <Link to="/" className="text-[20px] md:text-[22px] font-black text-[#0B1528] tracking-tight flex items-center gap-2 group">
         <span className="w-8 h-8 rounded-lg bg-[#5cb9a5] flex items-center justify-center text-white shadow-lg shadow-[#5cb9a5]/20 group-hover:rotate-12 transition-transform duration-300">
@@ -115,7 +115,7 @@ function NavBar() {
 
       {/* Mobile Dropdown Menu */}
       {isMenuOpen && (
-        <div className="absolute top-[calc(100%+12px)] left-0 right-0 bg-white/90 backdrop-blur-2xl rounded-[2rem] p-8 shadow-[0_12px_48px_rgba(0,0,0,0.12)] border border-white/50 md:hidden flex flex-col gap-8 animate-in fade-in slide-in-from-top-4 duration-300 origin-top">
+        <div className="absolute top-[calc(100%+12px)] left-0 right-0 bg-white/90 backdrop-blur-2xl rounded-4xl p-8 shadow-[0_12px_48px_rgba(0,0,0,0.12)] border border-white/50 md:hidden flex flex-col gap-8 animate-in fade-in slide-in-from-top-4 duration-300 origin-top">
           <ul className="flex flex-col gap-6 text-[17px] font-bold">
             <li><Link to="/" onClick={() => setIsMenuOpen(false)} className={currentPath === "/" ? "text-[#5cb9a5]" : "text-[#0B1528] hover:text-[#5cb9a5] transition-colors"}>Home</Link></li>
             <li><Link to="/about" onClick={() => setIsMenuOpen(false)} className={currentPath === "/about" ? "text-[#5cb9a5]" : "text-[#0B1528] hover:text-[#5cb9a5] transition-colors"}>About</Link></li>

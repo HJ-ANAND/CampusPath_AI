@@ -23,27 +23,27 @@ const Contact = () => {
 
       {/* ── MAIN CONTENT ── */}
       <main className="relative z-10 max-w-6xl mx-auto px-6 pt-36 md:pt-44 pb-24">
-        
+
         {/* Header Section: Centered and Clean */}
         <div className="text-center mb-16 md:mb-20 space-y-4">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-[#0B1528]">
             Let's <span className="text-[#5cb9a5]">Connect</span>
           </h1>
           <p className="max-w-xl mx-auto text-slate-500 text-base md:text-lg font-medium leading-relaxed">
-            Quick question or deep collaboration? <br className="hidden md:block"/> 
+            Quick question or deep collaboration? <br className="hidden md:block"/>
             We're dedicated to bringing your items home.
           </p>
         </div>
 
         {/* 2-Column Responsive Grid: Prevents horizontal stretching */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-start">
-          
+
           {/* Left Column: Info & Stats Group */}
           <div className="md:col-span-5 flex flex-col gap-6 md:gap-8">
-            
+
             {/* Contact Details Card */}
-            <div className="bg-white/80 backdrop-blur-md border border-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/40 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#5cb9a5]/10 to-transparent rounded-full blur-3xl -z-10 -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700"></div>
+            <div className="bg-white/80 backdrop-blur-md border border-white p-8 rounded-4xl shadow-xl shadow-slate-200/40 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-br from-[#5cb9a5]/10 to-transparent rounded-full blur-3xl -z-10 -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700"></div>
               <div className="space-y-8 relative z-10">
                 <div className="flex items-center gap-5 group/item cursor-pointer">
                   <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-[#0B1528] shrink-0 group-hover/item:bg-[#5cb9a5] group-hover/item:text-white transition-all duration-300 shadow-sm">
@@ -78,32 +78,32 @@ const Contact = () => {
             </div>
 
             {/* Stats Card - Dark Accented */}
-            <div className="bg-[#0B1528] p-8 rounded-[2rem] text-white shadow-2xl shadow-[#0B1528]/20 border border-white/5 relative overflow-hidden group hover:-translate-y-1 transition-transform duration-500">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+            <div className="bg-[#0B1528] p-8 rounded-4xl text-white shadow-2xl shadow-[#0B1528]/20 border border-white/5 relative overflow-hidden group hover:-translate-y-1 transition-transform duration-500">
+              <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
               <span className="text-[10px] font-black uppercase tracking-widest text-[#5cb9a5] block mb-3 relative z-10">Global Community</span>
               <h4 className="text-2xl lg:text-3xl font-bold leading-tight mb-6 relative z-10">
                 150+ Happy <br/>Reconnections
               </h4>
               <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden relative z-10">
                 <div className="h-full w-4/5 bg-[#5cb9a5] rounded-full relative overflow-hidden">
-                  <div className="absolute top-0 right-0 bottom-0 w-20 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
+                  <div className="absolute top-0 right-0 bottom-0 w-20 bg-linear-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Right Column: Contact Form Card */}
-          <div className="md:col-span-7 bg-white p-8 md:p-12 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 relative">
+          <div className="md:col-span-7 bg-white p-8 md:p-12 rounded-4xl border border-slate-100 shadow-xl shadow-slate-200/50 relative">
             <h3 className="text-2xl font-black text-[#0B1528] mb-10">Drop us a line</h3>
-            
+
             <form className="space-y-10" onSubmit={(e) => e.preventDefault()}>
               <div className="grid lg:grid-cols-2 gap-8">
                 {/* Name Input */}
                 <div className="relative group">
-                  <input 
-                    type="text" 
-                    id="name" 
-                    className="w-full bg-transparent border-b-2 border-slate-100 py-3 text-base font-medium outline-none focus:border-[#5cb9a5] transition-colors peer" 
+                  <input
+                    type="text"
+                    id="name"
+                    className="w-full bg-transparent border-b-2 border-slate-100 py-3 text-base font-medium outline-none focus:border-[#5cb9a5] transition-colors peer"
                     placeholder=" "
                     required
                   />
@@ -114,10 +114,10 @@ const Contact = () => {
 
                 {/* Email Input */}
                 <div className="relative group">
-                  <input 
-                    type="email" 
-                    id="email" 
-                    className="w-full bg-transparent border-b-2 border-slate-100 py-3 text-base font-medium outline-none focus:border-[#5cb9a5] transition-colors peer" 
+                  <input
+                    type="email"
+                    id="email"
+                    className="w-full bg-transparent border-b-2 border-slate-100 py-3 text-base font-medium outline-none focus:border-[#5cb9a5] transition-colors peer"
                     placeholder=" "
                     required
                   />
@@ -129,10 +129,10 @@ const Contact = () => {
 
               {/* Message Input */}
               <div className="relative group">
-                <textarea 
-                  id="message" 
+                <textarea
+                  id="message"
                   rows="4"
-                  className="w-full bg-transparent border-b-2 border-slate-100 py-3 text-base font-medium outline-none focus:border-[#5cb9a5] transition-colors peer resize-none" 
+                  className="w-full bg-transparent border-b-2 border-slate-100 py-3 text-base font-medium outline-none focus:border-[#5cb9a5] transition-colors peer resize-none"
                   placeholder=" "
                   required
                 ></textarea>

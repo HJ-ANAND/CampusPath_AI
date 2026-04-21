@@ -6,7 +6,7 @@
 
 body {
   background-color: #f8fafc;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(11, 21, 40, 0.12) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(11, 21, 40, 0.12) 1px, transparent 1px);
   background-size: 60px 60px;
@@ -69,7 +69,7 @@ body {
 }
 
 @utility watermark-text {
-  @apply absolute font-black text-slate-900/[0.02] leading-none tracking-tighter select-none pointer-events-none;
+  @apply absolute font-black text-slate-900/2 leading-none tracking-tighter select-none pointer-events-none;
   font-size: 15rem;
 }
 
@@ -82,7 +82,7 @@ body {
 }
 
 @utility bg-grid {
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(11, 21, 40, 0.12) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(11, 21, 40, 0.12) 1px, transparent 1px);
   background-size: 60px 60px;

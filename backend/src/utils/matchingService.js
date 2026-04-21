@@ -2,6 +2,8 @@ const stringSimilarity = require("string-similarity");
 const ItemReport = require("../models/itemModel");
 const Match = require("../models/matchModel");
 const Notification = require("../models/notificationModel");
+const { getUserEmail } = require("./clerkClient");
+const { sendMatchEmail } = require("./emailService");
 
 const MATCH_THRESHOLD = 0.7;
 
@@ -107,6 +109,15 @@ const findMatches = async (newReport) => {
               type: "match_found",
               relatedId: match._id,
             });
+
+            getUserEmail(entry.userId).then(email => {
+              if (email) {
+                const reportObj = typeof newReport.toObject === 'function' ? newReport.toObject() : newReport;
+                const itemDetails = entry.isReporter ? reportObj : candidate;
+                const matchDetails = entry.isReporter ? candidate : reportObj;
+                sendMatchEmail(email, itemDetails, { ...matchDetails, score });
+              }
+            }).catch(err => console.error("Email processing error:", err));
           }
         }
       }
