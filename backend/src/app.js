@@ -5,6 +5,7 @@ const connectDB = require("./config/db");
 const itemRoutes = require("./routes/itemRoutes");
 const matchRoutes = require("./routes/matchRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use("/api", itemRoutes);
 app.use("/api", matchRoutes);
 app.use("/api", notificationRoutes);
+app.use("/api", chatRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "Lost And Found Backend Working!" });
