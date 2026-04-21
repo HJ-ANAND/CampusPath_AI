@@ -5,60 +5,94 @@ const Notification = require("../models/notificationModel");
 const { getUserEmail } = require("./clerkClient");
 const { sendMatchEmail } = require("./emailService");
 
-const MATCH_THRESHOLD = 0.7;
+const MATCH_THRESHOLD = 0.5;
 
 /**
- * Calculates a match score between two items
+ * Calculates a match score between two items.
+ * 
+ * Scoring weights (total = 1.0):
+ *   Category match:  25%  (exact/fuzzy from AI metadata)
+ *   Title similarity: 20%  (short, consistent AI-generated titles)
+ *   Description sim:  15%  (long AI text — can diverge, weighted lower)
+ *   Color match:      15%  (structured metadata)
+ *   Location sim:     15%  (user-entered, usually consistent)
+ *   Brand match:      10%  (structured metadata)
+ * 
  * @param {Object} reportA - The new report
  * @param {Object} reportB - An existing report from DB
  * @returns {Number} Score from 0 to 1
  */
 const calculateScore = (reportA, reportB) => {
   let score = 0;
+  const breakdown = {};
 
-  // 1. Category (Fuzzy match — AI-generated categories can vary: "Wallets" vs "Wallet")
+  // 1. Category — must match or it's a dealbreaker (25%)
   const catA = (reportA.extractedDetails?.category || "").toLowerCase().trim();
   const catB = (reportB.extractedDetails?.category || "").toLowerCase().trim();
 
   if (catA && catB) {
     const catSimilarity = stringSimilarity.compareTwoStrings(catA, catB);
-    if (catSimilarity >= 0.6) {
-      score += 0.2;
+    breakdown.category = catSimilarity;
+    if (catSimilarity >= 0.5) {
+      score += 0.25;
     } else {
-      return 0; // Category mismatch is a dealbreaker
+      breakdown.result = "REJECTED (category mismatch)";
+      return { score: 0, breakdown };
     }
+  } else {
+    breakdown.category = "skipped (empty)";
   }
-  // If either category is empty/missing, skip the category check (don't penalize)
 
-  // 2. Text Similarity (Title & Description) - 40%
-  const textA = `${reportA.title} ${reportA.description}`.toLowerCase();
-  const textB = `${reportB.title} ${reportB.description}`.toLowerCase();
-  const textSim = stringSimilarity.compareTwoStrings(textA, textB);
-  score += textSim * 0.4;
+  // 2. Title Similarity — short, consistent AI titles (20%)
+  const titleA = reportA.title.toLowerCase();
+  const titleB = reportB.title.toLowerCase();
+  const titleSim = stringSimilarity.compareTwoStrings(titleA, titleB);
+  score += titleSim * 0.2;
+  breakdown.title = titleSim;
 
-  // 3. Color Similarity - 15%
+  // 3. Description Similarity — can diverge due to AI rewriting (15%)
+  const descA = reportA.description.toLowerCase();
+  const descB = reportB.description.toLowerCase();
+  const descSim = stringSimilarity.compareTwoStrings(descA, descB);
+  score += descSim * 0.15;
+  breakdown.description = descSim;
+
+  // 4. Color Similarity (15%)
   const colorA = (reportA.extractedDetails?.color || "").toLowerCase();
   const colorB = (reportB.extractedDetails?.color || "").toLowerCase();
   if (colorA && colorB) {
     const colorSim = stringSimilarity.compareTwoStrings(colorA, colorB);
     score += colorSim * 0.15;
+    breakdown.color = colorSim;
+  } else {
+    breakdown.color = "skipped (empty)";
   }
 
-  // 4. Location similarity - 15%
-  const locA = reportA.location.toLowerCase();
-  const locB = reportB.location.toLowerCase();
-  const locSim = stringSimilarity.compareTwoStrings(locA, locB);
-  score += locSim * 0.15;
+  // 5. Location similarity (15%)
+  const locA = (reportA.location || "").toLowerCase();
+  const locB = (reportB.location || "").toLowerCase();
+  if (locA && locB) {
+    const locSim = stringSimilarity.compareTwoStrings(locA, locB);
+    score += locSim * 0.15;
+    breakdown.location = locSim;
+  } else {
+    breakdown.location = "skipped (empty)";
+  }
 
-  // 5. Brand similarity - 10%
+  // 6. Brand similarity (10%)
   const brandA = (reportA.extractedDetails?.brand || "").toLowerCase();
   const brandB = (reportB.extractedDetails?.brand || "").toLowerCase();
   if (brandA && brandB) {
     const brandSim = stringSimilarity.compareTwoStrings(brandA, brandB);
     score += brandSim * 0.1;
+    breakdown.brand = brandSim;
+  } else {
+    breakdown.brand = "skipped (empty)";
   }
 
-  return Math.min(score, 1); // Cap at 1.0
+  const finalScore = Math.min(score, 1);
+  breakdown.total = finalScore;
+  return { score: finalScore, breakdown };
 };
 
 /**
@@ -81,7 +115,12 @@ const findMatches = async (newReport) => {
     console.log(`[Match] Checking ${candidates.length} ${targetType} candidates for "${newReport.title}"`);
 
     for (const candidate of candidates) {
-      const score = calculateScore(newReport, candidate);
+      const { score, breakdown } = calculateScore(newReport, candidate);
+
+      // Log top candidates for debugging (scores above 0.3)
+      if (score >= 0.3) {
+        console.log(`[Match]   📊 "${newReport.title}" vs "${candidate.title}" → ${Math.round(score * 100)}%`, JSON.stringify(breakdown));
+      }
 
       if (score >= MATCH_THRESHOLD) {
         // 1. Find or Create the Match
@@ -133,7 +172,6 @@ const findMatches = async (newReport) => {
             // Send email notification (background, non-blocking)
             getUserEmail(entry.userId).then(email => {
               if (email) {
-                const reportObj = typeof newReport.toObject === 'function' ? newReport.toObject() : newReport;
                 const itemDetails = entry.userId === lostReport.userId ? (typeof lostReport.toObject === 'function' ? lostReport.toObject() : lostReport) : (typeof foundReport.toObject === 'function' ? foundReport.toObject() : foundReport);
                 const matchDetails = entry.userId === lostReport.userId ? (typeof foundReport.toObject === 'function' ? foundReport.toObject() : foundReport) : (typeof lostReport.toObject === 'function' ? lostReport.toObject() : lostReport);
                 console.log(`[Email] Sending match email to ${email} for user ${entry.userId}`);
