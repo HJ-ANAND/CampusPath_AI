@@ -35,9 +35,12 @@ const generateEnhancedContent = async (rawDescription, type) => {
     const candidate = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!candidate) throw new Error("No response from AI");
 
-    // Remove any accidental markdown backticks if AI ignores instruction
     const cleanJson = candidate.replace(/```json|```/g, "").trim();
-    return JSON.parse(cleanJson);
+    try {
+      return JSON.parse(cleanJson);
+    } catch {
+      throw new Error("Invalid JSON from AI");
+    }
   } catch (error) {
     console.error("AI Service Error:", error.response?.data || error.message);
     throw new Error("Failed to process AI request");
