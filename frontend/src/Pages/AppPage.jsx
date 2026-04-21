@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import axios from "axios";
+import ChatWindow from "../component/ChatWindow";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
@@ -24,37 +25,34 @@ function AppPage() {
     const saved = localStorage.getItem('activeReports');
     return saved ? JSON.parse(saved) : [];
   });
+  const [viewItem, setViewItem] = useState(null);
+  const [activeChat, setActiveChat] = useState(null);
 
   useEffect(() => {
     localStorage.setItem('activeReports', JSON.stringify(reports));
   }, [reports]);
 
+  const fetchDashboardData = async () => {
+    if (!user) return;
+    setIsSyncing(true);
+    try {
+      await axios.post(`${API_BASE_URL}/items/sync/${user.id}`);
+      const repRes = await axios.get(`${API_BASE_URL}/items/user/${user.id}`);
+      setReports(repRes.data);
+      const matchRes = await axios.get(`${API_BASE_URL}/matches/user/${user.id}`);
+      setMatches(matchRes.data);
+      const notifRes = await axios.get(`${API_BASE_URL}/notifications/${user.id}`);
+      setNotifications(notifRes.data);
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    } finally {
+      setTimeout(() => setIsSyncing(false), 1000);
+    }
+  };
+
   useEffect(() => {
     if (user) {
-      const fetchData = async () => {
-        setIsSyncing(true);
-        try {
-          // Trigger Deep Match Sync
-          await axios.post(`${API_BASE_URL}/items/sync/${user.id}`);
-
-          // Fetch Reports
-          const repRes = await axios.get(`${API_BASE_URL}/items/user/${user.id}`);
-          setReports(repRes.data);
-
-          // Fetch Matches
-          const matchRes = await axios.get(`${API_BASE_URL}/matches/user/${user.id}`);
-          setMatches(matchRes.data);
-
-          // Fetch Notifications
-          const notifRes = await axios.get(`${API_BASE_URL}/notifications/${user.id}`);
-          setNotifications(notifRes.data);
-        } catch (error) {
-          console.error("Failed to fetch data:", error);
-        } finally {
-          setTimeout(() => setIsSyncing(false), 1000);
-        }
-      };
-      fetchData();
+      fetchDashboardData();
     }
   }, [user]);
 
@@ -253,6 +251,17 @@ function AppPage() {
               <div className="w-2 h-8 bg-[#5cb9a5] rounded-full"></div>
               <h2 className="text-2xl md:text-3xl font-black text-[#0B1528]">Potential Matches Detected</h2>
               <span className="bg-[#5cb9a5]/10 text-[#5cb9a5] px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest animate-pulse">AI Powered</span>
+              <button 
+                id="refresh-matches-btn"
+                onClick={fetchDashboardData}
+                disabled={isSyncing}
+                className={`ml-auto w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-[#5cb9a5] hover:border-[#5cb9a5]/30 transition-all shadow-sm ${isSyncing ? 'opacity-50' : ''}`}
+                title="Refresh Matches"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className={isSyncing ? 'animate-spin' : ''}>
+                  <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                </svg>
+              </button>
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -261,7 +270,11 @@ function AppPage() {
                 const otherItem = isLostOwner ? match.foundItemId : match.lostItemId;
                 
                 return (
-                  <div key={match._id} className="group relative bg-white/80 backdrop-blur-md border-2 border-[#5cb9a5]/20 p-8 rounded-[2.5rem] shadow-xl shadow-[#5cb9a5]/5 hover:border-[#5cb9a5] transition-all duration-500">
+                  <div 
+                    key={match._id} 
+                    onClick={() => setViewItem({ ...otherItem, matchScore: match.score })}
+                    className="group relative bg-white/80 backdrop-blur-md border-2 border-[#5cb9a5]/20 p-8 rounded-[2.5rem] shadow-xl shadow-[#5cb9a5]/5 hover:border-[#5cb9a5] transition-all duration-500 cursor-pointer"
+                  >
                     <div className="absolute -top-4 -right-4 w-16 h-16 bg-[#5cb9a5] rounded-full flex flex-col items-center justify-center text-white shadow-lg shadow-[#5cb9a5]/30">
                        <span className="text-xs font-black leading-none">{Math.round(match.score * 100)}%</span>
                        <span className="text-[8px] font-bold uppercase tracking-tighter">Match</span>
@@ -286,12 +299,14 @@ function AppPage() {
                       {isLostOwner && match.status === "pending" ? (
                         <>
                           <button 
+                            id="accept-match-btn"
                             onClick={() => handleAcceptMatch(match._id)}
                             className="flex-1 bg-[#5cb9a5] text-white py-3 rounded-xl font-black text-sm shadow-lg shadow-[#5cb9a5]/20 hover:-translate-y-1 transition-all"
                           >
                             This is mine!
                           </button>
                           <button 
+                            id="reject-match-btn"
                             onClick={() => handleRejectMatch(match._id)}
                             className="px-4 py-3 rounded-xl border-2 border-slate-100 text-slate-400 hover:bg-slate-50 transition-all"
                           >
@@ -300,9 +315,26 @@ function AppPage() {
                         </>
                       ) : (
                         <div className={`w-full py-3 rounded-xl font-black text-sm text-center ${
-                          match.status === "accepted" ? "bg-green-50 text-green-600 border border-green-100" : "bg-slate-50 text-slate-400"
+                          match.status === "accepted" ? "bg-green-50 text-green-600 border border-green-100 flex flex-col gap-2" : "bg-slate-50 text-slate-400"
                         }`}>
-                          {match.status === "accepted" ? "🎉 MATCH CONFIRMED" : "WAITING FOR OWNER"}
+                          {match.status === "accepted" ? (
+                            <>
+                              <span>🎉 MATCH CONFIRMED</span>
+                              <button 
+                                id={`open-chat-${match._id}`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setActiveChat({
+                                    matchId: match._id,
+                                    itemTitle: otherItem.title
+                                  });
+                                }}
+                                className="bg-[#5cb9a5] text-white py-2 px-4 rounded-lg text-xs hover:bg-[#4ea693] transition-colors mt-1"
+                              >
+                                💬 Open Chat
+                              </button>
+                            </>
+                          ) : "WAITING FOR OWNER"}
                         </div>
                       )}
                     </div>
@@ -327,7 +359,11 @@ function AppPage() {
             <h2 className="text-2xl font-black text-[#0B1528] mb-6">Active Reports</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {reports.map((report) => (
-                <div key={report._id || report.id} className="bg-white/70 backdrop-blur-sm border border-white/50 p-6 rounded-[2rem] shadow-sm hover:shadow-md transition-all relative overflow-hidden group">
+                <div 
+                  key={report._id || report.id} 
+                  onClick={() => setViewItem(report)}
+                  className="bg-white/70 backdrop-blur-sm border border-white/50 p-6 rounded-[2rem] shadow-sm hover:shadow-md transition-all relative overflow-hidden group cursor-pointer"
+                >
                   <div className={`absolute top-0 left-0 w-full h-1.5 ${report.type === 'lost' ? 'bg-[#0B1528]' : 'bg-[#5cb9a5]'}`}></div>
                   <div className="flex justify-between items-start mb-4">
                      <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${report.type === 'lost' ? 'bg-slate-100 text-slate-600' : 'bg-[#5cb9a5]/10 text-[#5cb9a5]'}`}>
@@ -469,6 +505,109 @@ function AppPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════
+          ITEM DETAIL MODAL
+      ══════════════════════════════════════════════════════ */}
+      {viewItem && (
+        <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-[0_32px_100px_rgba(0,0,0,0.3)] overflow-hidden animate-in zoom-in-95 duration-300 border border-slate-100 max-h-[90vh] overflow-y-auto">
+            <div className="p-8 md:p-12">
+              <div className="flex justify-between items-start mb-8">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-3">
+                    <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest ${viewItem.type === 'lost' ? 'bg-[#0B1528] text-white' : 'bg-[#5cb9a5] text-white'}`}>
+                      {viewItem.type} Item
+                    </span>
+                    {viewItem.matchScore && (
+                      <span className="bg-[#5cb9a5]/10 text-[#5cb9a5] px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest">
+                        {Math.round(viewItem.matchScore * 100)}% Match
+                      </span>
+                    )}
+                  </div>
+                  <h2 className="text-2xl md:text-4xl font-black text-[#0B1528] leading-tight mt-2">{viewItem.title}</h2>
+                </div>
+                <button 
+                  id="close-detail-modal-btn"
+                  onClick={() => setViewItem(null)} 
+                  className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 hover:bg-[#0B1528] hover:text-white transition-all shrink-0"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                </button>
+              </div>
+
+              <div className="space-y-8">
+                {/* Info Pills */}
+                <div className="flex flex-wrap gap-4">
+                  <div className="flex items-center gap-3 bg-slate-50 px-5 py-3 rounded-2xl border border-slate-100">
+                    <div className="text-[#5cb9a5]">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Location</span>
+                      <span className="text-sm font-bold text-slate-700">{viewItem.location}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 bg-slate-50 px-5 py-3 rounded-2xl border border-slate-100">
+                    <div className="text-[#5cb9a5]">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Time</span>
+                      <span className="text-sm font-bold text-slate-700">{viewItem.incidentTime || viewItem.date}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Description</h3>
+                  <div className="bg-slate-50/50 p-6 rounded-[2rem] border border-slate-100/50">
+                    <p className="text-slate-600 font-medium leading-relaxed whitespace-pre-wrap">
+                      {viewItem.description}
+                    </p>
+                  </div>
+                </div>
+
+                {/* AI Extracted Details */}
+                {viewItem.extractedDetails && Object.values(viewItem.extractedDetails).some(v => v) && (
+                  <div>
+                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-4">AI Analyzed Details</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {Object.entries(viewItem.extractedDetails).map(([key, value]) => value && (
+                        <div key={key} className="p-4 bg-white border border-slate-100 rounded-2xl shadow-sm">
+                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">{key}</span>
+                          <span className="text-sm font-bold text-[#5cb9a5]">{value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Contact CTA */}
+                <div className="pt-4">
+                  <button onClick={() => setViewItem(null)} className="w-full bg-[#0B1528] text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-[#0B1528]/10 hover:-translate-y-1 transition-all">
+                    Close Details
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════
+          CHAT WINDOW
+      ══════════════════════════════════════════════════════ */}
+      {activeChat && (
+        <ChatWindow 
+          matchId={activeChat.matchId}
+          userId={user.id}
+          itemTitle={activeChat.itemTitle}
+          onClose={() => setActiveChat(null)}
+        />
       )}
     </div>
   );

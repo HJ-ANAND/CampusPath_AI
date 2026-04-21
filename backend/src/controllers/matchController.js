@@ -14,7 +14,7 @@ const getUserMatches = async (req, res) => {
     const matches = await Match.find()
       .populate("lostItemId")
       .populate("foundItemId")
-      .sort({ score: -1, createdAt: -1 });
+      .sort({ createdAt: -1, score: -1 });
 
     const userMatches = matches.filter((match) => {
       return (
