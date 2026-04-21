@@ -1,5 +1,11 @@
 const { createClerkClient } = require("@clerk/clerk-sdk-node");
 
+if (!process.env.CLERK_SECRET_KEY) {
+  console.warn("[Clerk] ⚠️ CLERK_SECRET_KEY is not set — user email lookups will fail.");
+} else {
+  console.log("[Clerk] ✅ Clerk client configured successfully.");
+}
+
 const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 /**
@@ -10,9 +16,13 @@ const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY 
 const getUserEmail = async (userId) => {
   try {
     const user = await clerkClient.users.getUser(userId);
-    return user.emailAddresses[0]?.emailAddress || null;
+    const email = user.emailAddresses[0]?.emailAddress || null;
+    if (!email) {
+      console.warn(`[Clerk] ⚠️ User ${userId} has no email addresses in Clerk.`);
+    }
+    return email;
   } catch (error) {
-    console.error(`Error fetching user ${userId} from Clerk:`, error);
+    console.error(`[Clerk] ❌ Error fetching user ${userId}:`, error.message);
     return null;
   }
 };

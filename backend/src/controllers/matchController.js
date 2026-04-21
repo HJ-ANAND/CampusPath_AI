@@ -54,7 +54,7 @@ const updateMatchStatus = async (req, res) => {
     if (status === "accepted") {
       await Notification.create({
         userId: match.foundItemId.userId,
-        message: `User confirmed they lost the item you found: ${match.foundItemId.title}. You can now coordinate recovery!`,
+        message: `✅ The owner confirmed your found item "${match.foundItemId.title}" is theirs! Open the chat to coordinate the return.`,
         type: "status_update",
         relatedId: match._id,
       });

@@ -17,9 +17,14 @@ const generateEnhancedContent = async (rawDescription, type) => {
         The user provided this description of a ${type} item: "${rawDescription}"
 
         Your task:
-        1. Rewrite the description to be clear, professional, and detailed.
+        1. Rewrite the description to be clear, professional, and detailed. Focus ONLY on describing the item itself — its physical appearance, brand, color, condition, distinguishing features, and where/when it was lost or found.
         2. Generate a short, catchy title (max 6-8 words).
         3. Extract specific metadata: color, brand, distinctiveMark, and category (e.g., Electronics, Keys, Wallets, Pets).
+
+        CRITICAL RULES:
+        - Do NOT include any advisory, instructional, or action-oriented text in the description such as "report to the nearest lost and found desk", "contact the lost and found department", "if found please return to", "please hand it over to authorities", or similar phrases.
+        - The description must ONLY contain factual details about the item itself. No instructions, no advice, no calls to action.
+        - Keep the category to a single standard word (e.g., "Electronics", "Keys", "Wallet", "Bag", "Clothing", "Jewelry", "Pets", "Documents", "Accessories", "Other").
 
         Strictly return your response as a JSON object with this exact structure:
         {

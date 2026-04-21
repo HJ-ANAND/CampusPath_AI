@@ -44,7 +44,7 @@ io.on("connection", (socket) => {
         // Create In-App Notification
         await Notification.create({
           userId: recipientId,
-          message: `New message for item: ${match.lostItemId.title}`,
+          message: `💬 New message about "${match.lostItemId.title}" — tap to continue the conversation.`,
           type: "chat_message",
           relatedId: matchId,
         });

@@ -1,12 +1,30 @@
 const nodemailer = require("nodemailer");
 
-const transporter = nodemailer.createTransport({
+// Validate email config at module load time
+const EMAIL_CONFIG = {
   host: process.env.EMAIL_HOST,
   port: parseInt(process.env.EMAIL_PORT),
-  secure: process.env.EMAIL_PORT == 465, // true for 465, false for other ports
+  user: process.env.EMAIL_USER,
+  pass: process.env.EMAIL_PASS,
+};
+
+if (!EMAIL_CONFIG.host || !EMAIL_CONFIG.user || !EMAIL_CONFIG.pass) {
+  console.warn("[Email] ⚠️ EMAIL CONFIGURATION INCOMPLETE — emails will not be sent.");
+  console.warn(`[Email]   EMAIL_HOST: ${EMAIL_CONFIG.host ? "✅ set" : "❌ MISSING"}`);
+  console.warn(`[Email]   EMAIL_PORT: ${EMAIL_CONFIG.port ? "✅ set" : "❌ MISSING"}`);
+  console.warn(`[Email]   EMAIL_USER: ${EMAIL_CONFIG.user ? "✅ set" : "❌ MISSING"}`);
+  console.warn(`[Email]   EMAIL_PASS: ${EMAIL_CONFIG.pass ? "✅ set" : "❌ MISSING"}`);
+} else {
+  console.log("[Email] ✅ Email service configured successfully.");
+}
+
+const transporter = nodemailer.createTransport({
+  host: EMAIL_CONFIG.host,
+  port: EMAIL_CONFIG.port,
+  secure: EMAIL_CONFIG.port === 465, // true for 465, false for other ports
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: EMAIL_CONFIG.user,
+    pass: EMAIL_CONFIG.pass,
   },
 });
 
@@ -17,10 +35,18 @@ const transporter = nodemailer.createTransport({
  * @param {Object} matchDetails 
  */
 const sendMatchEmail = async (toEmail, itemDetails, matchDetails) => {
-  if (!toEmail) return;
+  if (!toEmail) {
+    console.warn("[Email] ⚠️ sendMatchEmail called with no recipient email — skipping.");
+    return false;
+  }
+
+  if (!EMAIL_CONFIG.host || !EMAIL_CONFIG.user || !EMAIL_CONFIG.pass) {
+    console.warn(`[Email] ⚠️ Cannot send email to ${toEmail} — email service not configured.`);
+    return false;
+  }
 
   const mailOptions = {
-    from: `"Lost & Found AI" <${process.env.EMAIL_USER}>`,
+    from: `"Lost & Found AI" <${EMAIL_CONFIG.user}>`,
     to: toEmail,
     subject: `✨ Potential Match Found: ${itemDetails.title}`,
     html: `
@@ -57,10 +83,12 @@ const sendMatchEmail = async (toEmail, itemDetails, matchDetails) => {
 
   try {
     const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully:", info.messageId);
+    console.log(`[Email] ✅ Email sent successfully to ${toEmail} — MessageID: ${info.messageId}`);
     return true;
   } catch (error) {
-    console.error("Email send error:", error);
+    console.error(`[Email] ❌ Failed to send email to ${toEmail}:`, error.message);
+    if (error.code) console.error(`[Email]   Error code: ${error.code}`);
+    if (error.responseCode) console.error(`[Email]   SMTP response code: ${error.responseCode}`);
     return false;
   }
 };
